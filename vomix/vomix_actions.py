@@ -79,6 +79,7 @@ class vomix_actions:
         # Create outdir + datadir folders 
         outdir = module_obj.outdir
         datadir = module_obj.datadir
+        fastadir = module_obj.fastadir
 
         if not (os.path.exists(outdir) and os.path.exists(os.path.join(outdir, ".vomix"))):
             os.makedirs(os.path.join(outdir, ".vomix"), exist_ok=True)
@@ -87,10 +88,15 @@ class vomix_actions:
         latest_run = now.strftime("%Y%m%d_%H%M%S")
         outdir_folder = os.path.join(outdir, ".vomix/log/vomix" + latest_run)
         datadir_folder = datadir
+        fastadir_folder = fastadir
 
         os.makedirs(outdir_folder, exist_ok=True)
-        os.makedirs(datadir_folder, exist_ok=True)
 
+        if datadir_folder is not None and datadir_folder != "":
+            os.makedirs(datadir_folder, exist_ok=True)
+        if fastadir_folder is not None and fastadir_folder != "":
+            os.makedirs(fastadir_folder, exist_ok=True)
+            
         # if custom config is specified
         if module_obj.custom_config is not None:
             logging.info(f"Using custom config: {module_obj.custom_config}")
@@ -151,7 +157,7 @@ class vomix_actions:
 
         logging.info(f"Running script: {script_path}")
         cmd = ['bash', script_path]
-        
+
         currentVomixDir = os.path.dirname(os.path.abspath(__file__))
         count = sum(1 for _ in re.finditer(r'\b%s\b' % re.escape("/vomix"), currentVomixDir))
         upPath = "/"
