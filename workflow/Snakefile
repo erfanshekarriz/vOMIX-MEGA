@@ -83,13 +83,13 @@ def readfastadir(f):
 # Clean directory paths & add back to config.yml file
 outdir = cleanpath(config["outdir"])
 datadir = cleanpath(config["datadir"])
-# config["outdir"] = outdir
-# config["datadir"] = datadir
+config["outdir"] = outdir
+config["datadir"] = datadir
 
 
 # Create & format relative output directory
-# if not (os.path.exists(outdir) and os.path.exists(os.path.join(outdir, ".vomix"))):
-#   os.makedirs(os.path.join(outdir, ".vomix"), exist_ok=True)
+if not (os.path.exists(outdir) and os.path.exists(os.path.join(outdir, ".vomix"))):
+  os.makedirs(os.path.join(outdir, ".vomix"), exist_ok=True)
 
 
 ### Set temporary dir
@@ -123,16 +123,16 @@ if emptykeys != 1 and config["module"] != "setup-database":
   sys.exit(1)
 
 
-### Save configuration file
-#now = datetime.datetime.now()
-#nowstr = now.strftime("%Y%m%d_%H%M%S")
-#config["latest-run"] = nowstr
+### Save configuration file [WARNING: THIS DECTION IS DIFFERENT BETWEEN THE SNAKEMAKE BACKEND AND WRAPPER SOFTWARES]
+now = datetime.datetime.now()
+nowstr = now.strftime("%Y%m%d_%H%M%S")
+config["latest-run"] = nowstr
 
-nowstr = config["latest-run"]
 logdir = relpath(".vomix/log/vomix" + nowstr)
-# os.makedirs(logdir, exist_ok=True)
+os.makedirs(logdir, exist_ok=True)
 with open(os.path.join(logdir,  "config.json"), "w") as configf:
   json.dump(config, configf)
+
 
 ####################################
 # Include & Add Targets Per Module #

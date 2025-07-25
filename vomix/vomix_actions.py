@@ -169,7 +169,7 @@ class vomix_actions:
         else:
             raise FileNotFoundError("Could not determine the path to the current working directory.")
 
-        logging.debug(f"currentWorkingPath: {currentWorkingPath}")
+        logging.info(f"currentWorkingPath: {currentWorkingPath}")
 
         try:
             with Popen(cmd, stdout=PIPE, bufsize=1, universal_newlines=True, cwd=currentWorkingPath) as p:
