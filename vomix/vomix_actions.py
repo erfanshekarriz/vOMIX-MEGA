@@ -10,6 +10,8 @@ import logging
 from inspect import getsourcefile
 from os.path import abspath
 import inspect, os.path
+import re
+
 
 logging.basicConfig(level=logging.INFO)
 
@@ -98,9 +100,18 @@ class vomix_actions:
         else:
             # TODO check if works 
             # Create a new config file from the config template
-            filename = inspect.getframeinfo(inspect.currentframe()).filename
+            # filename = inspect.getframeinfo(inspect.currentframe()).filename
 
-            path = str.replace(os.path.dirname(os.path.abspath(filename)), "vomix", "config/config.yml")
+            currentVomixDir = os.path.dirname(os.path.abspath(__file__))
+            count = sum(1 for _ in re.finditer(r'\b%s\b' % re.escape("/vomix"), currentVomixDir))
+            configPath = "/config/config.yml"
+            # path = str.replace(os.path.dirname(os.path.abspath(filename)), "vomix", "/config/config.yml")
+            # logging.info(f"count: {count}", " currentVomixDir:  " , currentVomixDir)
+
+            if count > 0:
+                path = configPath.join(currentVomixDir.rsplit("/vomix", count))
+            else:
+                raise FileNotFoundError("Could not determine the path to the template config file.")
 
             logging.info(f"Using template config: {path}")
     
@@ -144,7 +155,6 @@ class vomix_actions:
         currentWorkingPath = str.replace(os.path.dirname(os.path.abspath(__file__)), "vomix", "")
 
         logging.debug(f"currentWorkingPath: {currentWorkingPath}")
-
         try:
             with Popen(cmd, stdout=PIPE, bufsize=1, universal_newlines=True, cwd=currentWorkingPath) as p:
                 for line in p.stdout:
