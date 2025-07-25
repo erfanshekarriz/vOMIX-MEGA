@@ -129,14 +129,15 @@ class vomix_actions:
 
             for module in module_obj.__dict__:
                 value = module_obj.__dict__[module]
-                if value is not None and module != 'custom_config':
+                if value is not None:
                     module = str.replace(module, "_", "-")
                     list_doc[module] = value
+                    logging.info(f"////Setting config option: {module} = {value}")
                
-        # edit template config latest_run
-        with open( "config/config.yml") as f:
-            list_doc = yaml.safe_load(f)
-            list_doc["latest-run"] = latest_run
+        # # edit template config latest_run
+        # with open( "config/config.yml") as f:
+        #     list_doc = yaml.safe_load(f)
+        #     list_doc["latest-run"] = latest_run
 
         with open(outdir_folder + "/config.yml", "w") as f:
             yaml.dump(list_doc, f)
