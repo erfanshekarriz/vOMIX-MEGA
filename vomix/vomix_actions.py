@@ -98,7 +98,6 @@ class vomix_actions:
             shutil.copy(os.path.realpath(module_obj.custom_config), outdir_folder)
             os.rename(outdir_folder + "/" + module_obj.custom_config, outdir_folder + "/config.yml")
         else:
-            # TODO check if works 
             # Create a new config file from the config template
 
             currentVomixDir = os.path.dirname(os.path.abspath(__file__))
@@ -150,13 +149,9 @@ class vomix_actions:
         with open(script_path, "w") as f:
             f.write(script)
 
-        # TODO Run script
         logging.info(f"Running script: {script_path}")
         cmd = ['bash', script_path]
-        # currentWorkingPath = str.replace(os.path.dirname(os.path.realpath(__file__)), "/.venv/lib/python3.9/site-packages/vomix", "")
-
-        # currentWorkingPath = str.replace(os.path.dirname(os.path.abspath(__file__)), "/vomix", "")
-
+        
         currentVomixDir = os.path.dirname(os.path.abspath(__file__))
         count = sum(1 for _ in re.finditer(r'\b%s\b' % re.escape("/vomix"), currentVomixDir))
         upPath = "/"

@@ -51,7 +51,7 @@ def snakemake_options(function):
     function = click.option('--cores', '-c', default=0, required=False, help = '[Snakemake]')(function)
     function = click.option('--jobs', '-j', default=0, required=False, help = '[Snakemake]')(function)
     function = click.option('--jobs', '-j', default=0, required=False, help = '[Snakemake]')(function)
-    function = click.option('--latency-wait', default=0, required=False, help = '[Snakemake]')(function)
+    function = click.option('--latency-wait', default=20, required=False, help = '[Snakemake]')(function)
     function = click.option('--rerun-incomplete', '-ri', required=False, default=False, flag_value=True, help = '[Snakemake]')(function)
     function = click.option('--rerun-triggers', '-ri', required=False, default=None, help = '[Snakemake]')(function)
     function = click.option('--sdm', required=False, default=None, help = '[Snakemake]')(function)
@@ -292,7 +292,7 @@ def run_viral_identify(workdir, outdir, datadir, samplelist, custom_config, fast
 @click.option('--genomad-db', required=False, default=None, help = 'Path to geNomad database directory || default: "workflow/database/genomad" [STR]')
 @click.option('--genomad-params', required=False, default=None, help = 'Additional parameters to pass on to geNomad || default: "--enable-score-calibration --relaxed" [INT]')
 @snakemake_options
-def run_viral_taxonomy(workdir, outdir, datadir, samplelist, custom_config, fasta, fastadir, sample_name, assembly_ids, latest_run, splits, viral_binning, intermediate, setup_database, max_cores, email, ncbi_api_key, viphogs_hmmeval, viphogs_prop, PhaBox2_db, phagcn_minlen, phagcn_params, diamond_params, genomad_db, genomad_params, dry_run, forceall, configfile, unlock, cores, jobs, latency_wait, rerun_incomplete, rerun_triggers, sdm, executor, quiet, add_args):
+def run_viral_taxonomy(workdir, outdir, datadir, samplelist, custom_config, fasta, fastadir, sample_name, assembly_ids, latest_run, splits, viral_binning, intermediate, setup_database, max_cores, email, ncbi_api_key, viphogs_hmmeval, viphogs_prop, phabox2_db, phagcn_minlen, phagcn_params, diamond_params, genomad_db, genomad_params, dry_run, forceall, configfile, unlock, cores, jobs, latency_wait, rerun_incomplete, rerun_triggers, sdm, executor, quiet, add_args):
         logging.info(f"Running module: viral-taxonomy")
         logging.info(f"fasta: {fasta}, outdir: {outdir}")
         
@@ -307,8 +307,8 @@ def run_viral_taxonomy(workdir, outdir, datadir, samplelist, custom_config, fast
         if viphogs_prop:
             module_obj.viphogs_prop = viphogs_prop
             module_obj.hasOptions = True
-        if PhaBox2_db: 
-            module_obj.PhaBox2_db = PhaBox2_db
+        if phabox2_db: 
+            module_obj.PhaBox2_db = phabox2_db
             module_obj.hasOptions = True
         if phagcn_minlen:
             module_obj.phagcn_minlen = phagcn_minlen
