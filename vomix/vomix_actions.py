@@ -100,13 +100,12 @@ class vomix_actions:
         else:
             # TODO check if works 
             # Create a new config file from the config template
-            # filename = inspect.getframeinfo(inspect.currentframe()).filename
 
             currentVomixDir = os.path.dirname(os.path.abspath(__file__))
             count = sum(1 for _ in re.finditer(r'\b%s\b' % re.escape("/vomix"), currentVomixDir))
             configPath = "/config/config.yml"
-            # path = str.replace(os.path.dirname(os.path.abspath(filename)), "vomix", "/config/config.yml")
-            logging.info(f"count: {count}", " currentVomixDir:  " , currentVomixDir)
+
+            # logging.info(f"count: {count}", " currentVomixDir:  " , currentVomixDir)
             if count == 1:
                 path = str.replace(currentVomixDir, "/vomix", configPath)
             elif count > 1:
@@ -128,8 +127,11 @@ class vomix_actions:
                 if value is not None and module != 'custom_config':
                     module = str.replace(module, "_", "-")
                     list_doc[module] = value
-                    # logging.info(f"///////TEST: {module} // " , {value})
-
+               
+        # edit template config latest_run
+        with open( "config/config.yml") as f:
+            list_doc = yaml.safe_load(f)
+            list_doc["latest-run"] = latest_run
 
         with open(outdir_folder + "/config.yml", "w") as f:
             yaml.dump(list_doc, f)
@@ -153,9 +155,22 @@ class vomix_actions:
         cmd = ['bash', script_path]
         # currentWorkingPath = str.replace(os.path.dirname(os.path.realpath(__file__)), "/.venv/lib/python3.9/site-packages/vomix", "")
 
-        currentWorkingPath = str.replace(os.path.dirname(os.path.abspath(__file__)), "vomix", "")
+        # currentWorkingPath = str.replace(os.path.dirname(os.path.abspath(__file__)), "/vomix", "")
+
+        currentVomixDir = os.path.dirname(os.path.abspath(__file__))
+        count = sum(1 for _ in re.finditer(r'\b%s\b' % re.escape("/vomix"), currentVomixDir))
+        upPath = "/"
+
+        # logging.info(f"count: {count}", " currentVomixDir:  " , currentVomixDir)
+        if count == 1:
+            currentWorkingPath = str.replace(currentVomixDir, "/vomix", upPath)
+        elif count > 1:
+            currentWorkingPath = upPath.join(currentVomixDir.rsplit("/vomix", count - 1))
+        else:
+            raise FileNotFoundError("Could not determine the path to the current working directory.")
 
         logging.debug(f"currentWorkingPath: {currentWorkingPath}")
+
         try:
             with Popen(cmd, stdout=PIPE, bufsize=1, universal_newlines=True, cwd=currentWorkingPath) as p:
                 for line in p.stdout:
