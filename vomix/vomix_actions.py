@@ -100,16 +100,7 @@ class vomix_actions:
             # Create a new config file from the config template
             filename = inspect.getframeinfo(inspect.currentframe()).filename
 
-            currentDir = os.path.dirname(os.path.realpath(__file__))
-            python_install_path = sys.executable
-
-            # /Users/elsavijendran/Projects/vOMIX-MEGA-main/vOMIX-MEGA/.venv/lib/python3.9/site-packages/vomix
-            # /home/eshekar/.conda/envs/vomix/lib/python3.12/site-packages/vomix
-            # /home/eshekar/.conda/envs/vomix/lib/python3.12/site-packages/vomix
-            logging.info(f"///////python_install_path: {python_install_path}")
-            logging.info(f"///////currentDir: {currentDir}")
-
-            path     = str.replace(os.path.dirname(os.path.abspath(filename)), "/.venv/lib/python3.9/site-packages/vomix", "/config/config.yml")
+            path = str.replace(os.path.dirname(os.path.abspath(filename)), "vomix", "/config/config.yml")
 
             logging.info(f"Using template config: {path}")
     
@@ -148,7 +139,12 @@ class vomix_actions:
         # TODO Run script
         logging.info(f"Running script: {script_path}")
         cmd = ['bash', script_path]
-        currentWorkingPath = str.replace(os.path.dirname(os.path.realpath(__file__)), "/.venv/lib/python3.9/site-packages/vomix", "")
+        # currentWorkingPath = str.replace(os.path.dirname(os.path.realpath(__file__)), "/.venv/lib/python3.9/site-packages/vomix", "")
+
+        currentWorkingPath = str.replace(os.path.dirname(os.path.abspath(__file__)), "vomix", "")
+
+        logging.info(f"currentWorkingPath: {currentWorkingPath}")
+
         logging.info(f"Current working directory: {currentWorkingPath}")
 
         try:

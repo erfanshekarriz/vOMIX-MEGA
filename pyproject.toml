@@ -9,10 +9,10 @@ readme = "README.md"
 requires-python = ">=3.8"
 
 [tool.setuptools]
-packages = ["vomix", "config"]
+packages = ["vomix", "config", "workflow", "workflow.database", "workflow.envs", "workflow.notebooks", "workflow.rules", "workflow.scripts"]
 
 [tool.setuptools.package-data]
-"*" = ["*.yml"]
+"*" = ["*"]
 
 [build-system]
 requires = ["setuptools>=61.0"]
