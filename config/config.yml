@@ -1,7 +1,7 @@
 # general configuration 
 
 module: "end-to-end"
-workdir : "."
+workdir : "/home/eshekar/pipeline/vomix"
 outdir : "results/"
 datadir : "fastq/"
 samplelist : "sample/sample_list.tsv"

@@ -171,9 +171,10 @@ class vomix_actions:
         #     raise FileNotFoundError("Could not determine the path to the current working directory.")
 
         # logging.info(f"currentWorkingPath: {currentWorkingPath}")
+        
 
         try:
-            with Popen(cmd, stdout=PIPE, bufsize=1, universal_newlines=True) as p:
+            with Popen(cmd, stdout=PIPE, bufsize=1, universal_newlines=True, cwd= module_obj.workdir) as p:
                 for line in p.stdout:
                     print(line, end='') 
 
