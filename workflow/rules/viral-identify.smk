@@ -27,7 +27,7 @@ elif config['fastadir'] != "":
   fastap = readfastadir(config['fastadir'])
   assembly_ids = config["assembly-ids"]
 else:
-  samples, assemblies = parse_sample_list(config["samplelist"], datadir, outdir, email, api_key, nowstr)
+  samples, assemblies = parse_sample_list(config["workdir"] + config["samplelist"], datadir, outdir, email, api_key, nowstr)
   fastap = relpath(os.path.join("assembly", assembler, "samples/{sample_id}/output/final.contigs.fa"))
   assembly_ids = assemblies.keys()
 

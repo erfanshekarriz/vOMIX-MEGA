@@ -12,7 +12,7 @@ nowstr=config["latest-run"]
 outdir=config["outdir"]
 datadir=config["datadir"]
 
-samples, assemblies = parse_sample_list(config["samplelist"], datadir, outdir, email, api_key, nowstr)
+samples, assemblies = parse_sample_list(config["workdir"] + config["samplelist"], datadir, outdir, email, api_key, nowstr)
 
 # Check if there are any co-assemblies and abort if using SPAdes and co-assembly
 if (len(assemblies.keys()) != len(samples.keys())) and (assembler == "spades"):
