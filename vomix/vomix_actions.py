@@ -28,9 +28,6 @@ class vomix_actions:
         return f"{self.name} v{self.version}: {self.description}"
     
     def get_snakefile(filename):
-        # sf = os.path.join(os.path.dirname(os.path.realpath("vomix/workflow/rules/")), filename)
-        # sf = os.path.realpath("vomix/workflow/rules/" + filename)
-
         filename = inspect.getframeinfo(inspect.currentframe()).filename
         sf     = str.replace(os.path.dirname(os.path.abspath(filename)), "/.venv/lib/python3.9/site-packages/vomix", "vomix/workflow/Snakefile")
 
@@ -60,9 +57,7 @@ class vomix_actions:
             if value is not None and attr != 'custom_config' and attr != 'name':
                 attr = str.replace(attr, "_", "-")
                 script += f'{attr}="{value}" '
-            # if attr == 'workdir' and (value == "" or value is None):
-            #     workdir = os.path.dirname(os.path.realpath(getsourcefile(lambda:0)))
-            #     script += f'workdir="{workdir}" '
+
 
         for attr, value in snakemake_obj.__dict__.items():
             if value is not None and attr != 'add_args':
@@ -110,7 +105,6 @@ class vomix_actions:
             count = sum(1 for _ in re.finditer(r'\b%s\b' % re.escape("/vomix"), currentVomixDir))
             configPath = "/config/config.yml"
 
-            # logging.info(f"count: {count}", " currentVomixDir:  " , currentVomixDir)
             if count == 1:
                 path = str.replace(currentVomixDir, "/vomix", configPath)
             elif count > 1:
@@ -132,13 +126,8 @@ class vomix_actions:
                 if value is not None:
                     module = str.replace(module, "_", "-")
                     list_doc[module] = value
-                    logging.info(f"////Setting config option: {module} = {value}")
+                    logging.debug(f"Setting config option: {module} = {value}")
                
-        # # edit template config latest_run
-        # with open( "config/config.yml") as f:
-        #     list_doc = yaml.safe_load(f)
-        #     list_doc["latest-run"] = latest_run
-
         with open(outdir_folder + "/config.yml", "w") as f:
             yaml.dump(list_doc, f)
 
@@ -163,7 +152,6 @@ class vomix_actions:
         count = sum(1 for _ in re.finditer(r'\b%s\b' % re.escape("/vomix"), currentVomixDir))
         upPath = "/"
 
-        # logging.info(f"count: {count}", " currentVomixDir:  " , currentVomixDir)
         if count == 1:
             currentWorkingPath = str.replace(currentVomixDir, "/vomix", upPath)
         elif count > 1:
@@ -185,32 +173,3 @@ class vomix_actions:
         except subprocess.CalledProcessError as e:
             return f"Error: {e.stderr}"
         
-    # def run_last_module(module) -> str:
-    #     try:
-    #         script_path = os.path.realpath("vomix/snakemake.sh")
-
-    #         with open(script_path, "r") as file:
-    #             lines = file.readlines()
-
-    #         if not lines:
-    #             return f"Error: The script file is empty."
-
-    #         with open(script_path, "w") as file:
-    #             for line in lines:
-    #                 if 'snakemake --config module=' in line:
-    #                     # Replace the module value in the line
-    #                     parts = line.split('module="')
-    #                     if len(parts) > 1:
-    #                         rest = parts[1].split('"', 1)
-    #                         if len(rest) > 1:
-    #                             line = parts[0] + f'module="{module}' + '"' + rest[1][rest[1].find('"'):]
-    #                 file.write(line)
-
-    #         cmd = ['bash', script_path]
-
-    #         # result = subprocess.run(cmd, check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
-
-    #         result = subprocess.run(cmd, stdout=open('out.log', 'w'), stderr=open('error.log', 'a'),)
-    #         return result.stdout 
-    #     except subprocess.CalledProcessError as e:
-    #         return f"Error: {e.stderr}"
