@@ -409,7 +409,7 @@ def run_viral_community(workdir, outdir, datadir, samplelist, custom_config, fas
 @click.option('--eggNOG-params', required=False, default=None, help = 'Parameters for running eggNOG-mapper v2. See more at https://github.com/eggnogdb/eggnog-mapper/wiki || default: "-m diamond --hmm_evalue 0.001 --hmm_score 60 --query-cover 20 --subject-cover 20 --tax_scope auto --target_orthologs all --go_evidence non-electronic --report_orthologs" [INT]')
 @click.option('--PhaVIP-params', required=False, default=None, help = 'Minimum contig length to filter BEFORE viral identification || default: "" [STR]')
 @snakemake_options
-def run_viral_annotate(workdir, outdir, datadir, samplelist, custom_config, fasta, fastadir, sample_name, assembly_ids, latest_run, splits, viral_binning, intermediate, setup_database, max_cores, email, ncbi_api_key, eggNOG_params, PhaVIP_params, dry_run, forceall, configfile, unlock, cores, jobs, latency_wait, rerun_incomplete, rerun_triggers, sdm, executor, quiet, add_args):
+def run_viral_annotate(workdir, outdir, datadir, samplelist, custom_config, fasta, fastadir, sample_name, assembly_ids, latest_run, splits, viral_binning, intermediate, setup_database, max_cores, email, ncbi_api_key, eggnog_params, PhaVIP_params, dry_run, forceall, configfile, unlock, cores, jobs, latency_wait, rerun_incomplete, rerun_triggers, sdm, executor, quiet, add_args):
         logging.info(f"Running module: viral-annotate")
         logging.info(f"outdir: {outdir}, datadir: {datadir}, samplelist: {samplelist}")
         
@@ -418,8 +418,8 @@ def run_viral_annotate(workdir, outdir, datadir, samplelist, custom_config, fast
         # Set the attributes of the module object
         module_obj = setOptions(module_obj, workdir, outdir, datadir, samplelist, fasta, fastadir, sample_name, assembly_ids, latest_run, splits, viral_binning, intermediate, setup_database, max_cores, email, ncbi_api_key, custom_config)
 
-        if eggNOG_params:
-            module_obj.eggNOG_params = eggNOG_params
+        if eggnog_params:
+            module_obj.eggNOG_params = eggnog_params
             module_obj.hasOptions = True
         if PhaVIP_params:
             module_obj.PhaVIP_params = PhaVIP_params
