@@ -517,7 +517,7 @@ def run_end_to_end(workdir, outdir, datadir, samplelist, fasta, fastadir, sample
 @click.option('--vOTU-targetcov', required=False, default=None, help = 'Minimum target coverage for fast clustering algorithm of viral contigs || default: 85 [NUM]')
 @click.option('--vOTU-querycov', required=False, default=None, help = 'Minimum query coverage for fast clustering algorithm of viral contigs || default: 0 [NUM]')
 @snakemake_options
-def run_cluster_fast(workdir, outdir, datadir, samplelist, custom_config, fasta, fastadir, sample_name, assembly_ids, latest_run, splits, viral_binning, intermediate, setup_database, max_cores, email, ncbi_api_key, clustering_fast, cdhit_params, vOTU_ani, vOTU_targetcov, vOTU_querycov, dry_run, forceall, configfile, unlock, cores, jobs, latency_wait, rerun_incomplete, rerun_triggers, sdm, executor, quiet, add_args):
+def run_cluster_fast(workdir, outdir, datadir, samplelist, custom_config, fasta, fastadir, sample_name, assembly_ids, latest_run, splits, viral_binning, intermediate, setup_database, max_cores, email, ncbi_api_key, clustering_fast, cdhit_params, votu_ani, votu_targetcov, votu_querycov, dry_run, forceall, configfile, unlock, cores, jobs, latency_wait, rerun_incomplete, rerun_triggers, sdm, executor, quiet, add_args):
         logging.info(f"Running module: cluster-fast")
         logging.info(f"fasta: {fasta}, outdir: {outdir}")
         
@@ -532,14 +532,14 @@ def run_cluster_fast(workdir, outdir, datadir, samplelist, custom_config, fasta,
         if cdhit_params:
             module_obj.cdhit_params = cdhit_params
             module_obj.hasOptions = True
-        if vOTU_ani:
-            module_obj.vOTU_ani = vOTU_ani
+        if votu_ani:
+            module_obj.vOTU_ani = votu_ani
             module_obj.hasOptions = True
-        if vOTU_targetcov:
-            module_obj.vOTU_targetcov = vOTU_targetcov
+        if votu_targetcov:
+            module_obj.votu_targetcov = votu_targetcov
             module_obj.hasOptions = True
-        if vOTU_querycov:
-            module_obj.vOTU_querycov = vOTU_querycov
+        if votu_querycov:
+            module_obj.votu_querycov = votu_querycov
             module_obj.hasOptions = True
         snakemake_obj = SnakemakeFlags(dry_run, forceall, configfile, unlock, cores, jobs, latency_wait, rerun_incomplete, rerun_triggers, sdm, executor, quiet, add_args)
 
