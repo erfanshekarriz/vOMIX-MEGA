@@ -1,0 +1,12 @@
+name: taxonomy
+channels:
+  - conda-forge
+  - bioconda
+  - defaults
+dependencies:
+  - biopython=1.81=py312h98912ed_1
+  - ete3=3.1.3=pyhd8ed1ab_0
+  - numpy=1.26.2=py312heda63a1_0
+  - pandas=2.1.3=py312hfb8ada1_0
+  - python=3.12.0=hab00c5b_0_cpython
+  - scipy=1.11.4=py312heda63a1_0

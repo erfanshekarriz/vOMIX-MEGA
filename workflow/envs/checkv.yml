@@ -1,0 +1,11 @@
+name: checkv
+channels:
+  - conda-forge
+  - bioconda
+  - defaults
+dependencies:
+  - checkv=1.0.1=pyhdfd78af_0
+  - blast=2.15.0
+  - diamond=2.1.8
+  - hmmer=3.4
+  - python=3.10.13

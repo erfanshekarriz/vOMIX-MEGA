@@ -1,0 +1,9 @@
+name: genomad
+channels:
+  - conda-forge
+  - bioconda
+  - defaults
+dependencies:
+  - genomad=1.8.1=pyhdfd78af_0
+  - keras=2.13.1=pyhd8ed1ab_0
+  - tensorflow=2.13.1=cpu_py310hd1aba9c_1

@@ -1,0 +1,157 @@
+# general configuration 
+
+module: "end-to-end"
+workdir : "."
+outdir : "results/"
+datadir : "fastq/"
+samplelist : "sample/sample_list.tsv"
+fasta: ""
+fastadir: ""
+sample-name: ""
+assembly-ids: ""
+latest-run : ""
+splits: 0
+viral-binning: False
+intermediate: False
+setup-database: True
+max-cores: 4
+email: "vomixtest@gmail.com"
+NCBI-API-key: "ad4774fd01842f9b95dad79ee660b972d808"
+
+# setup-database.smk
+
+PhaBox2-db: "workflow/database/phabox_db_v2"
+genomad-db: "workflow/database/genomad"
+virsorter2-db: "workflow/database/virsorter2"
+vibrant-db: "workflow/database/vibrant"
+checkv-database: "workflow/database/checkv"
+iphop-dbdir: "workflow/database/iphop/Aug_2023_pub_rw"
+eggNOG-db: "workflow/database/eggNOGv2"
+eggNOG-db-params: ""
+humann-db: "workflow/database/humann"
+checkm2-db: "workflow/database/checkm2"
+GTDBTk-db: "workflow/database/GTDB-Tk"
+
+# preprocess.smk & preprocess-decontam.smk
+
+dwnld-params : ""
+dwnld-only: False
+pigz-params: ""
+fastp-params: ""
+hostile-params: ""
+decontam-host: True
+hostile-aligner: "minimap2" # minimap2 or bowtie2 for long reads
+aligner-params: "-x sr" # parameters to pass to aligner [-x sr for minimap is for short reads]
+index-path: "workflow/database/hostile/human-t2t-hla.fa.gz" # visit https://github.com/bede/hostile to find out how to make your own custom host index
+
+# assembly.smk 
+
+assembler: "megahit" #["megahit", "spades"]
+megahit-minlen: 300
+megahit-params: "--prune-level 3"
+spades-params: "--meta"
+spades-memory: 250
+
+
+# viral-identify.smk and viral-benchmark.smk
+
+contig-minlen: 0
+genomad-minlen: 1000
+dvf-minlen: 1500
+phamer-minlen: 2000
+
+genomad-params: "--enable-score-calibration --relaxed"
+dvf-params: ""
+phamer-params: ""
+virsorter2-params: ""
+vf-params: ""
+vibrant-params: ""
+seeker-params: ""
+ppr-params: ""
+metaphinder-params: ""
+
+genomad-cutoff: 0.7
+dvf-cutoff: 0.7
+dvf-pval: 0.05
+phamer-cutoff: 0.7
+phamer-pred: "phage"
+vf-cutoff: ""
+virsorter2-cutoff: ""
+seeker-params: ""
+ppr-params: ""
+metaphinder-params: ""
+
+genomad-cutoff-s: 0
+phamer-cutoff-s: 0
+dvf-cutoff-s: 0
+
+checkv-original: False
+checkv-params: ""
+
+clustering-fast: True
+cdhit-params: "-c 0.95 -aS 0.85 -d 400 -M 0 -n 5"
+vOTU-ani: 95
+vOTU-targetcov: 85
+vOTU-querycov: 0
+
+minimap2-params: "-x sr"
+vrhyme-params: "-m 1000"
+vrhyme-minlen: 2000 # WARNING: cannot be set bellow 2000
+
+
+# viral-taxonomy.smk
+
+viphogs-hmmeval: 0.01
+viphogs-prop: 0.6  # Minimum proportion of annotated genes required for taxonomic assignment (default: 0.6)
+phagcn-minlen: 1000 # the minimum tested
+phagcn-params: ""
+diamond-params: "--query-cover 50 --subject-cover 50 --evalue 1e-5 --max-target-seqs 1000" # strongly recommend not changing this as it has been extensively tested by https://doi.org/10.1038/s41564-021-00928-6
+genomad-params: "--enable-score-calibration --relaxed"
+
+
+# viral-community.smk
+
+coverm-params: "--mapper minimap2-sr --min-read-percent-identity 95 --min-read-aligned-percent 75 --trim-min 10 --trim-max 90" # checkout coverm documentation for options https://wwood.github.io/CoverM/coverm-make.html
+coverm-methods : "tpm rpkm" # a space delimited list from coverm options
+
+
+# host.smk
+
+iphop-cutoff: 90
+iphop-params: ""
+CHERRY-params: ""
+PhaTYP-params: ""
+
+
+# prok-community.smk
+
+mpa-params: "--ignore_eukaryotes"
+mpa-indexv: "mpa_vOct22_CHOCOPhlAnSGB_202212"
+
+
+# prok-binning.smk 
+
+binning-consensus: False
+strobealign-params: ""
+MetaBAT2-params: "-m 1500"
+MaxBin2-params: "-min_contig_length 1500 -max_iteration 50 -prob_threshold 0.9"
+CONCOCT-params: ""
+jgi-summarize-params: "--percentIdentity 97"
+DASTool-params: ""
+checkm2-params: ""
+drep-params: ""
+galah-params: "--ani 95 --min-aligned-fraction 15 --fragment-length 3000"
+GTDBTk-identify-params: ""
+GTDBTk-align-params: ""
+GTDBTk-classify-params: ""
+VAMB-params: "-m 100"
+
+
+# viral-annotate.smk
+
+eggNOG-params: "-m diamond --hmm_evalue 0.001 --hmm_score 60 --query-cover 20 --subject-cover 20 --tax_scope auto --target_orthologs all --go_evidence non-electronic --report_orthologs"
+PhaVIP-params: ""
+
+# prok-annotate.smk
+humann-params: ""
+

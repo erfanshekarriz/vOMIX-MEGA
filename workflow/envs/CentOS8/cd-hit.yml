@@ -1,0 +1,14 @@
+name: cd-hit
+channels:
+  - conda-forge
+  - bioconda
+  - defaults
+dependencies:
+  - _libgcc_mutex=0.1=conda_forge
+  - _openmp_mutex=4.5=2_gnu
+  - cd-hit=4.8.1=h43eeafb_9
+  - libgcc-ng=13.2.0=h807b86a_3
+  - libgomp=13.2.0=h807b86a_3
+  - libstdcxx-ng=13.2.0=h7e041cc_3
+  - libzlib=1.2.13=hd590300_5
+  - zlib=1.2.13=hd590300_5

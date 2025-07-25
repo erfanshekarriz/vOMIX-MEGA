@@ -1,0 +1,25 @@
+# ignore everything
+*
+ 
+# but not these files
+!.gitignore
+!pyproject.toml
+!mkdocs.yml
+!README.md
+!LICENSE.md
+!CHANGELOG.md
+!Dockerfile
+!sample/sample_list.csv
+
+# but not these subdirectories 
+!config/
+!docs/
+!resources/
+!workflow/
+!vomix/
+!sample/contigs
+
+# except these subdirectories
+workflow/database
+workflow/params
+workflow/software

@@ -1,0 +1,7 @@
+name: parallel-virfinder
+channels:
+  - conda-forge
+  - bioconda
+  - defaults
+dependencies:
+  - parallel-virfinder=0.3.1=py310hdfd78af_01

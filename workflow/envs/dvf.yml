@@ -1,0 +1,11 @@
+name: dvf
+channels:
+  - defaults
+dependencies:
+  - biopython=1.78=py36h7f8727e_0
+  - h5py=2.10.0=py36hd6299e0_1
+  - keras=2.2.4=0
+  - numpy=1.19.2=py36h54aff64_0
+  - python=3.6.13=h12debd9_1
+  - scikit-learn=0.24.2=py36ha9443f7_0
+  - theano=1.0.3=py36hfd86e86_0

@@ -1,0 +1,12 @@
+name: biobakery3
+channels:
+  - biobakery
+  - conda-forge
+  - bioconda
+  - defaults
+dependencies:
+  - humann=3.9=py_0
+  - python=3.7.12=hf930737_100_cpython
+  - metaphlan=4.0.6=pyhca03a8a_0
+  - bowtie2=2.5.4=h7071971_4
+  - diamond=2.1.10=h43eeafb_2

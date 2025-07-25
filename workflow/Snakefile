@@ -1,0 +1,244 @@
+import os
+import glob
+import sys
+import platform
+import pandas as pd
+import snakemake
+import json
+import datetime
+
+from scripts.sample_list_parse import parse_sample_list
+
+from rich.console import Console
+from rich.progress import Progress
+from rich.layout import Layout
+from rich.panel import Panel
+console = Console()
+
+configfile: "config/config.yml"
+workdir: config["workdir"]
+
+# Important utility functions
+
+def cleanpath(f):
+  """Function to clean the backlash at the end of directory path.
+  Makes sure that all 'os.path.join's are consistent"""
+  if f.endswith(os.sep):
+    fi = f.rstrip(os.sep)
+    return fi 
+  else:
+    return f 
+
+def relpath(f):
+  """Function to redirect all output to a relative path.
+  This allows the snakemake to be flexible and process 
+  multiple datasets at once without locking.""" 
+  p = os.path.join(outdir, f)
+  return p
+
+
+def readfasta(f):
+  """Function to read fasta files for different input purposes"""
+  fastap = f
+  _, extension = os.path.splitext(fastap)
+  console.print(f"\n[dim]The config['fasta'] parameter is not empty, using '{fastap}' as input.")
+  if extension.lower() not in ['.fa', '.fasta', '.fna']:
+    console.print(Panel.fit("File path does not end with .fa, .fasta, or .fna", title = "Error", subtitle="Input not fasta file"))
+    sys.exit(1)
+  cwd = os.getcwd()
+  fasta_path = os.path.join(cwd, fastap)
+  if not os.path.exists(fastap):
+    console.print(Panel.fit("[dim]The fasta file path provided does not exist.", title="Error", subtitle="Fasta File Path"))
+    sys.exit(1)
+  if config['sample-name'] == "":
+    sample_id = os.path.splitext(os.path.basename(fastap))[0]
+    console.print(Panel.fit(f"[dim]config['sample-name'] not provided, using base name {sample_id} for output naming.", title="Warning", subtitle="Sample Name"))
+    config['sample-name'] = sample_id
+  else:
+    sample_id = config['sample-name']
+    config['sample-name'] = sample_id
+  return fasta_path
+
+def readfastadir(f):
+  """Function to read directory filled with fasta files for different input purposes"""
+  fastadir = cleanpath(f)
+  fastadirp = os.path.join(os.getcwd(), fastadir)
+  if not os.path.exists(fastadirp):
+    console.print(Panel.fit(f"The input file path '{fastadirp}' does not exist.", title="Error", subtitle="Fasta Directory Not Found."))
+  fastafs = [f for f in os.listdir(fastadirp) if (f.endswith('.fa') or f.endswith('.fasta') or f.endswith('.fna'))]
+  if len(fastafs) == 0:
+    console.print(Panel.fit(f"There are no files ending with .fa, .fasta, or .fna in '{fastadirp}'.", title="Error", subtitle="No Fasta Files"))
+    sys.exit(1)
+  assembly_ids = [os.path.basename(fastaf).rsplit(".", 1)[0] for fastaf in fastafs]
+  fastafs_str = '\n'.join(fastafs)
+  console.print(Panel.fit(f"Notice:[dim] Reading input as fasta files from config['fastadir'], the following files have been parsed correctly.\n{fastafs_str}", title="Notice", subtitle="Reading Fasta Directory"))
+  config['assembly-ids'] = assembly_ids
+  fasta_path = [os.path.join(fastadirp, fastaf) for fastaf in fastafs]
+  return fasta_path
+
+
+
+
+
+# Clean directory paths & add back to config.yml file
+outdir = cleanpath(config["outdir"])
+datadir = cleanpath(config["datadir"])
+config["outdir"] = outdir
+config["datadir"] = datadir
+
+
+# Create & format relative output directory
+if not (os.path.exists(outdir) and os.path.exists(os.path.join(outdir, ".vomix"))):
+  os.makedirs(os.path.join(outdir, ".vomix"), exist_ok=True)
+
+
+### Set temporary dir
+#if not os.getenv("TMPDIR"):
+#  os.environ["TMPDIR"] = "tmp"
+#  os.makedirs(os.environ["TMPDIR"], exist_ok=True)
+
+
+### Set wildcard constraints
+wildcard_constraints:
+  sample_id = "[A-Za-z0-9_-]+"
+
+assembler = config["assembler"]
+os.makedirs(datadir, exist_ok=True)
+
+### Perform a few chekcs
+if assembler not in ["megahit", "spades"]:
+  console.print(Panel.fit("""Assembler '{}' does not exists. Currently 'megahit' and 'spades' are supported and their parameters can be defined in the config.yml file. Default assembler is 'megahit'""".format(assembler), title="Error", subtitle="Wrong Assembler"))
+  sys.exit(1)
+
+if not isinstance(config['max-cores'], int):
+  console.print(Panel.fit(f"config['max-cores'] is not an integer: {config['max-cores']}, you can change the parameter in config/config.yml file", title="Error", subtitle="config['max-cores'] not integer"))
+  sys.exit(1)
+
+
+inputkeys = ["fasta", "samplelist", "fastadir"]
+emptykeys = sum(1 for key in inputkeys if config.get(key, "") != "")
+
+if emptykeys != 1 and config["module"] != "setup-database": 
+  console.print(Panel.fit(f"[dim] Multiple or no inputs detected. You can EITHER provide config['samplelist'] OR config['fastadir'] OR config['fasta']. You must provide at least one input format. Please read more about the permitted inputs on our wiki page.", title="Error", subtitle="Multiple Input Formats"))
+  sys.exit(1)
+
+
+### Save configuration file
+#now = datetime.datetime.now()
+#nowstr = now.strftime("%Y%m%d_%H%M%S")
+#config["latest_run"] = nowstr
+
+nowstr = config["latest_run"]
+logdir = relpath(".vomix/log/vomix" + nowstr)
+os.makedirs(logdir, exist_ok=True)
+with open(os.path.join(logdir,  "config.json"), "w") as configf:
+  json.dump(config, configf)
+
+####################################
+# Include & Add Targets Per Module #
+####################################
+
+targets = []
+if config["setup-database"] or config["module"] == "setup-database":
+  include: "rules/setup-database.smk"
+  if config["module"] == "setup-database":
+    targets += ["workflow/database/.benchmarks/done.log"]
+
+
+# fix symlink
+if config["module"] == "symlink":
+  include: "rules/symlink.smk"
+  targets = [relpath(".vomix/log/symlink_done.log")]
+
+# pre-process
+if config["module"] == "preprocess" or config["module"] == "end-to-end":
+  include: "rules/preprocess.smk"
+  targets += [relpath("preprocess/logs/done.log")]
+
+
+# assembly 
+if config["module"] == "assembly" or config["module"] == "end-to-end":
+  include: "rules/assembly.smk"
+  targets += [relpath(os.path.join("assembly", assembler, "logs/done.log"))]
+
+
+# identify (viral)
+if config["module"] == "viral-identify" or config["module"] == "end-to-end":
+  include: "rules/viral-identify.smk"
+  if config["viral-binning"]:
+    include: "rules/viral-binning.smk"
+  if config["checkv-original"]:
+    include: "rules/checkv.smk"
+  else:
+    include: "rules/checkv-pyhmmer.smk"
+  include: "rules/clustering.smk"
+  targets += [relpath("identify/viral/logs/done.log")]
+
+
+# benchmark (viral tools)
+if config["module"] == "viral-benchmark":
+  include: "rules/viral-benchmark.smk"
+  targets += [relpath("identify/viral/logs/done_benchmarks.log")]
+
+# viral refilter
+if config["module"] == "viral-refilter":
+  include: "rules/refilter-genomad.smk"
+  if config["viralbinning"]:
+    include: "rules/viral-binning.smk"
+  if config["checkv-original"]:
+    include: "rules/checkv.smk"
+  else:
+    include: "rules/checkv-pyhmmer.smk"
+  include: "rules/clustering.smk"
+  targets += [relpath("identify/viral/logs/done.log"), 
+      relpath("identify/viral/logs/clustering-done.log"), 
+      relpath("identify/viral/logs/checkv-done.log")]
+
+# checkv-pyhmmer
+if config["module"] == "checkv-pyhmmer":
+  if config["checkv-original"]:
+    include: "rules/checkv.smk"
+  else:
+    include: "rules/checkv-pyhmmer.smk"
+  targets += [relpath("identify/viral/logs/checkv-done.log")]
+
+# cluster fast
+if config["module"] == "clustering-fast":
+  include: "rules/clustering.smk"
+  targets += [relpath("identify/viral/logs/clustering-done.log")]
+
+# viral taxonomy
+if config["module"] == "viral-taxonomy" or config["module"] == "end-to-end":
+  include: "rules/viral-taxonomy.smk"
+  targets += [relpath("taxonomy/viral/logs/done.log")]
+
+# community (viral)
+if config["module"] == "viral-community" or config["module"] == "end-to-end":
+  include: "rules/viral-community.smk"
+  targets += [relpath("community/viral/logs/done.log")]
+
+# binning (prokaryotic)
+if config["module"] == "prok-binning" or config["module"] == "end-to-end":
+  include: "rules/prok-binning.smk"
+  targets += [relpath("binning/prok/logs/done.log")]
+
+# host 
+if config["module"] == "viral-host" or config["module"] == "end-to-end":
+  targets += [relpath("host/logs/done.log")]
+  include: "rules/viral-host.smk"
+
+# community (prokaryotic)
+if config["module"] == "prok-community":
+  include: "rules/prok-community.smk"
+  targets += [relpath("community/metaphlan/logs/done.log")]
+
+# annotation (prokaryotic)
+if config["module"] == "prok-annotate":
+  include: "rules/prok-annotate.smk"
+  targets += [relpath("annotate/prok/logs/done.log")]
+
+###############
+# MASTER RULE #
+###############
+rule all:
+  input: targets

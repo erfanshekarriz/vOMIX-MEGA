@@ -1,0 +1,12 @@
+name: seqkit
+channels:
+  - anaconda
+  - conda-forge
+  - bioconda
+  - defaults
+dependencies:
+  - biopython=1.78=py312h5eee18b_0
+  - numpy=1.26.0=py312hc5e2394_0
+  - pandas=2.1.1=py312h526ad5a_0
+  - python=3.12.0=h996f2a0_0
+  - seqkit=2.6.1=h9ee0642_0

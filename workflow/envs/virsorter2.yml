@@ -1,0 +1,7 @@
+name: virsorter2
+channels:
+  - conda-forge
+  - bioconda
+  - defaults
+dependencies:
+  - virsorter=2.2.4=pyhdfd78af_1

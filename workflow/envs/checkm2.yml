@@ -1,0 +1,12 @@
+name: checkm2
+channels:
+  - conda-forge
+  - bioconda
+  - defaults
+dependencies:
+  - checkm2=1.0.2=pyh7cba7a3_0
+  - prodigal=2.6.3=h7b50bb2_10
+  - scikit-learn=0.23.2=py38h5d63f67_3
+  - scipy=1.8.0=py38h56a6a73_1
+  - tensorflow=2.4.0=py38h578d9bd_0
+  - tensorflow-base=2.4.0=py38h01d9eeb_0

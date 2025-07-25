@@ -1,0 +1,1 @@
+nohup snakemake --config module="preprocess" decontam-host=True outdir="test1" datadir="test2" samplelist="test3" --use-conda -j 4 --latency-wait 20
