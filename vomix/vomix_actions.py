@@ -61,8 +61,11 @@ class vomix_actions:
 
         for attr, value in snakemake_obj.__dict__.items():
             if value is not None and attr != 'add_args':
-                attr = str.replace(attr, "_", "-")
-                script += f'{attr}="{value}" '
+                if value == "True":
+                    script += f'--{attr}'
+                else:
+                    attr = str.replace(attr, "_", "-")
+                    script += f'{attr}="{value}" '
             if attr == 'add_args' and value is not None and value != '':
                 script += f'{value} '
 
