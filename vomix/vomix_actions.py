@@ -64,7 +64,7 @@ class vomix_actions:
                 attr = str.replace(attr, "_", "-")
                 if str(value) == 'True':
                     script += f'--{attr} '
-                else:
+                elif str(value) != 'False':
                     script += f'{attr}="{value}" '
             if attr == 'add_args' and value is not None and value != '':
                 script += f'{value} '
