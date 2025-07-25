@@ -9,7 +9,7 @@ readme = "README.md"
 requires-python = ">=3.8"
 
 [tool.setuptools]
-packages = ["vomix"]
+packages = ["vomix", "config"]
 
 [build-system]
 requires = ["setuptools>=61.0"]
