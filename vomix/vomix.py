@@ -596,7 +596,7 @@ def run_checkv_pyhmmer(workdir, outdir, datadir, samplelist, custom_config, fast
 @click.option('--iphop-db', required=False, default=None, help = 'Path to iPHoP database for download || default: "workflow/database/iphop/Aug_2023_pub_rw" [STR]')
 @click.option('--humann-db', required=False, default=None, help = 'Path to HUMAnN3 databases for download || default: "workflow/database/humann" [STR]')
 @snakemake_options
-def run_setup_database(workdir, outdir, datadir, samplelist, custom_config, fasta, fastadir, sample_name, assembly_ids, latest_run, splits, viral_binning, intermediate, setup_database, max_cores, email, ncbi_api_key, PhaBox2_db, genomad_db, checkv_db, eggNOG_db, eggNOG_db_params, virsorter2_db, iphop_db, humann_db, dry_run, forceall, configfile, unlock, cores, jobs, latency_wait, rerun_incomplete, rerun_triggers, sdm, executor, quiet, add_args):
+def run_setup_database(workdir, outdir, datadir, samplelist, custom_config, fasta, fastadir, sample_name, assembly_ids, latest_run, splits, viral_binning, intermediate, setup_database, max_cores, email, ncbi_api_key, phabox2_db, genomad_db, checkv_db, eggnog_db, eggnog_db_params, virsorter2_db, iphop_db, humann_db, dry_run, forceall, configfile, unlock, cores, jobs, latency_wait, rerun_incomplete, rerun_triggers, sdm, executor, quiet, add_args):
         logging.info(f"Running module: setup-database")
         logging.info(f"fasta: {fasta}, outdir: {outdir}")
         
@@ -605,8 +605,8 @@ def run_setup_database(workdir, outdir, datadir, samplelist, custom_config, fast
         # Set the attributes of the module object
         module_obj = setOptions(module_obj, workdir, outdir, datadir, samplelist, fasta, fastadir, sample_name, assembly_ids, latest_run, splits, viral_binning, intermediate, setup_database, max_cores, email, ncbi_api_key, custom_config)
 
-        if PhaBox2_db:  
-            module_obj.PhaBox2_db = PhaBox2_db
+        if phabox2_db:  
+            module_obj.PhaBox2_db = phabox2_db
             module_obj.hasOptions = True
         if genomad_db:
             module_obj.genomad_db = genomad_db
@@ -614,11 +614,11 @@ def run_setup_database(workdir, outdir, datadir, samplelist, custom_config, fast
         if checkv_db:
             module_obj.checkv_db = checkv_db
             module_obj.hasOptions = True
-        if eggNOG_db:
-            module_obj.eggNOG_db = eggNOG_db
+        if eggnog_db:
+            module_obj.eggNOG_db = eggnog_db
             module_obj.hasOptions = True
-        if eggNOG_db_params:
-            module_obj.eggNOG_db_params = eggNOG_db_params
+        if eggnog_db_params:
+            module_obj.eggNOG_db_params = eggnog_db_params
             module_obj.hasOptions = True
         if virsorter2_db:   
             module_obj.virsorter2_db = virsorter2_db
