@@ -100,7 +100,7 @@ class vomix_actions:
             # Create a new config file from the config template
             filename = inspect.getframeinfo(inspect.currentframe()).filename
 
-            path = str.replace(os.path.dirname(os.path.abspath(filename)), "vomix", "/config/config.yml")
+            path = str.replace(os.path.dirname(os.path.abspath(filename)), "vomix", "config/config.yml")
 
             logging.info(f"Using template config: {path}")
     
@@ -144,7 +144,7 @@ class vomix_actions:
         currentWorkingPath = str.replace(os.path.dirname(os.path.abspath(__file__)), "vomix", "")
 
         logging.debug(f"currentWorkingPath: {currentWorkingPath}")
-        
+
         try:
             with Popen(cmd, stdout=PIPE, bufsize=1, universal_newlines=True, cwd=currentWorkingPath) as p:
                 for line in p.stdout:
