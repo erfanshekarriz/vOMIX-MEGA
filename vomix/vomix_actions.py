@@ -103,6 +103,8 @@ class vomix_actions:
             currentDir = os.path.dirname(os.path.realpath(__file__))
             # /Users/elsavijendran/Projects/vOMIX-MEGA-main/vOMIX-MEGA/.venv/lib/python3.9/site-packages/vomix
             # /home/eshekar/.conda/envs/vomix/lib/python3.12/site-packages/vomix
+            # /home/eshekar/.conda/envs/vomix/lib/python3.12/site-packages/vomix
+            logging.info(f"///////filename: {filename}")
             logging.info(f"///////currentDir: {currentDir}")
 
             path     = str.replace(os.path.dirname(os.path.abspath(filename)), "/.venv/lib/python3.9/site-packages/vomix", "/config/config.yml")
