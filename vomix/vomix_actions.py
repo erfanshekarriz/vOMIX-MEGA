@@ -79,9 +79,20 @@ class vomix_actions:
         if not (os.path.exists(outdir) and os.path.exists(os.path.join(outdir, ".vomix"))):
             os.makedirs(os.path.join(outdir, ".vomix"), exist_ok=True)
 
+        currentVomixDir = os.path.dirname(os.path.abspath(__file__))
+        count = sum(1 for _ in re.finditer(r'\b%s\b' % re.escape("/vomix"), currentVomixDir))
+        upPath = "/"
+        currentWorkingPath = ""
+        if count == 1:
+            currentWorkingPath = str.replace(currentVomixDir, "/vomix", upPath)
+        elif count > 1:
+            currentWorkingPath = upPath.join(currentVomixDir.rsplit("/vomix", count - 1))
+        else:
+            raise FileNotFoundError("Could not determine the path to the current working directory.")
+        
         now = datetime.datetime.now()
         latest_run = now.strftime("%Y%m%d_%H%M%S")
-        outdir_folder = os.path.join(outdir, ".vomix/log/vomix" + latest_run)
+        outdir_folder = os.path.join(currentWorkingPath, os.path.join(outdir, ".vomix/log/vomix" + latest_run))
         datadir_folder = datadir
         fastadir_folder = fastadir
 
@@ -148,21 +159,21 @@ class vomix_actions:
         logging.info(f"Running script: {script_path}")
         cmd = ['bash', script_path]
 
-        currentVomixDir = os.path.dirname(os.path.abspath(__file__))
-        count = sum(1 for _ in re.finditer(r'\b%s\b' % re.escape("/vomix"), currentVomixDir))
-        upPath = "/"
+        # currentVomixDir = os.path.dirname(os.path.abspath(__file__))
+        # count = sum(1 for _ in re.finditer(r'\b%s\b' % re.escape("/vomix"), currentVomixDir))
+        # upPath = "/"
 
-        if count == 1:
-            currentWorkingPath = str.replace(currentVomixDir, "/vomix", upPath)
-        elif count > 1:
-            currentWorkingPath = upPath.join(currentVomixDir.rsplit("/vomix", count - 1))
-        else:
-            raise FileNotFoundError("Could not determine the path to the current working directory.")
+        # if count == 1:
+        #     currentWorkingPath = str.replace(currentVomixDir, "/vomix", upPath)
+        # elif count > 1:
+        #     currentWorkingPath = upPath.join(currentVomixDir.rsplit("/vomix", count - 1))
+        # else:
+        #     raise FileNotFoundError("Could not determine the path to the current working directory.")
 
-        logging.info(f"currentWorkingPath: {currentWorkingPath}")
+        # logging.info(f"currentWorkingPath: {currentWorkingPath}")
 
         try:
-            with Popen(cmd, stdout=PIPE, bufsize=1, universal_newlines=True, cwd=currentWorkingPath) as p:
+            with Popen(cmd, stdout=PIPE, bufsize=1, universal_newlines=True) as p:
                 for line in p.stdout:
                     print(line, end='') 
 
