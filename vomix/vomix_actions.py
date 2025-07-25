@@ -143,10 +143,8 @@ class vomix_actions:
 
         currentWorkingPath = str.replace(os.path.dirname(os.path.abspath(__file__)), "vomix", "")
 
-        logging.info(f"currentWorkingPath: {currentWorkingPath}")
-
-        logging.info(f"Current working directory: {currentWorkingPath}")
-
+        logging.debug(f"currentWorkingPath: {currentWorkingPath}")
+        
         try:
             with Popen(cmd, stdout=PIPE, bufsize=1, universal_newlines=True, cwd=currentWorkingPath) as p:
                 for line in p.stdout:
