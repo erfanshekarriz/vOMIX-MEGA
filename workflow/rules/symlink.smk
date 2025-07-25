@@ -2,7 +2,7 @@ os.makedirs(relpath(".vomix/log"), exist_ok=True)
 
 email=config["email"]
 api_key=config["NCBI-API-key"]
-nowstr=config["latest_run"]
+nowstr=config["latest-run"]
 outdir=config["outdir"]
 datadir=config["datadir"]
 
