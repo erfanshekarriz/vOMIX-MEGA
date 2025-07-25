@@ -107,9 +107,10 @@ class vomix_actions:
             configPath = "/config/config.yml"
             # path = str.replace(os.path.dirname(os.path.abspath(filename)), "vomix", "/config/config.yml")
             logging.info(f"count: {count}", " currentVomixDir:  " , currentVomixDir)
-
-            if count > 0:
-                path = configPath.join(currentVomixDir.rsplit("/vomix", count))
+            if count == 1:
+                path = str.replace(currentVomixDir, "/vomix", configPath)
+            elif count > 1:
+                path = configPath.join(currentVomixDir.rsplit("/vomix", count - 1))
             else:
                 raise FileNotFoundError("Could not determine the path to the template config file.")
 
