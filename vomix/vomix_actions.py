@@ -74,37 +74,60 @@ class vomix_actions:
         return script
 
     def createFoldersAndUpdateConfig(self, module_obj):
+        currentVomixDir = os.path.dirname(os.path.abspath(__file__))
+        count = sum(1 for _ in re.finditer(r'\b%s\b' % re.escape("/vomix"), currentVomixDir))
+        configPath = "/config/config.yml"
+        fullConfigPath = ""
+
+        if count == 1:
+            fullConfigPath = str.replace(currentVomixDir, "/vomix", configPath)
+        elif count > 1:
+            fullConfigPath = configPath.join(currentVomixDir.rsplit("/vomix", count - 1))
+        else:
+            raise FileNotFoundError("Could not determine the path to the template config file.")
+        
+        logging.info(f"Using template config: {fullConfigPath}")
+
+        # get workdir
+        workdir = module_obj.workdir
+        if workdir is None:
+            # get workdir from custom config
+            if module_obj.custom_config is not None:
+                with open(module_obj.custom_config) as f:
+                    list_doc = yaml.safe_load(f)
+                    workdir = list_doc["workdir"]
+            else:
+                # get workdir from template config.yml 
+                with open(fullConfigPath) as f:
+                    list_doc = yaml.safe_load(f)
+                    workdir = list_doc["workdir"]
+        
+        logging.info(f"Using workdir: {workdir}")
+
         # Create outdir + datadir folders 
-        outdir = module_obj.outdir
-        datadir = module_obj.datadir
-        fastadir = module_obj.fastadir
+        outdir = workdir + module_obj.outdir
+        if module_obj.datadir is not None: 
+            datadir = workdir + module_obj.datadir
+            datadir_folder = datadir
+            os.makedirs(datadir_folder, exist_ok=True)
+        if module_obj.fastadir is not None: 
+            fastadir = workdir + module_obj.fastadir
+            fastadir_folder = fastadir
+            os.makedirs(fastadir_folder, exist_ok=True)
 
         if not (os.path.exists(outdir) and os.path.exists(os.path.join(outdir, ".vomix"))):
             os.makedirs(os.path.join(outdir, ".vomix"), exist_ok=True)
 
-        currentVomixDir = os.path.dirname(os.path.abspath(__file__))
-        count = sum(1 for _ in re.finditer(r'\b%s\b' % re.escape("/vomix"), currentVomixDir))
-        upPath = "/"
-        currentWorkingPath = ""
-        if count == 1:
-            currentWorkingPath = str.replace(currentVomixDir, "/vomix", upPath)
-        elif count > 1:
-            currentWorkingPath = upPath.join(currentVomixDir.rsplit("/vomix", count - 1))
-        else:
-            raise FileNotFoundError("Could not determine the path to the current working directory.")
-        
         now = datetime.datetime.now()
         latest_run = now.strftime("%Y%m%d_%H%M%S")
-        outdir_folder = os.path.join(currentWorkingPath, os.path.join(outdir, ".vomix/log/vomix" + latest_run))
-        datadir_folder = datadir
-        fastadir_folder = fastadir
+        outdir_folder = os.path.join(outdir, ".vomix/log/vomix" + latest_run)
 
         os.makedirs(outdir_folder, exist_ok=True)
 
-        if datadir_folder is not None and datadir_folder != "":
-            os.makedirs(datadir_folder, exist_ok=True)
-        if fastadir_folder is not None and fastadir_folder != "":
-            os.makedirs(fastadir_folder, exist_ok=True)
+        # if datadir_folder is not None and datadir_folder != "":
+        #     os.makedirs(datadir_folder, exist_ok=True)
+        # if fastadir_folder is not None and fastadir_folder != "":
+        #     os.makedirs(fastadir_folder, exist_ok=True)
             
         # if custom config is specified
         if module_obj.custom_config is not None:
@@ -115,20 +138,20 @@ class vomix_actions:
         else:
             # Create a new config file from the config template
 
-            currentVomixDir = os.path.dirname(os.path.abspath(__file__))
-            count = sum(1 for _ in re.finditer(r'\b%s\b' % re.escape("/vomix"), currentVomixDir))
-            configPath = "/config/config.yml"
+            # currentVomixDir = os.path.dirname(os.path.abspath(__file__))
+            # count = sum(1 for _ in re.finditer(r'\b%s\b' % re.escape("/vomix"), currentVomixDir))
+            # configPath = "/config/config.yml"
 
-            if count == 1:
-                path = str.replace(currentVomixDir, "/vomix", configPath)
-            elif count > 1:
-                path = configPath.join(currentVomixDir.rsplit("/vomix", count - 1))
-            else:
-                raise FileNotFoundError("Could not determine the path to the template config file.")
+            # if count == 1:
+            #     path = str.replace(currentVomixDir, "/vomix", configPath)
+            # elif count > 1:
+            #     path = configPath.join(currentVomixDir.rsplit("/vomix", count - 1))
+            # else:
+            #     raise FileNotFoundError("Could not determine the path to the template config file.")
 
-            logging.info(f"Using template config: {path}")
+            # logging.info(f"Using template config: {path}")
     
-            shutil.copy(path, outdir_folder)
+            shutil.copy(fullConfigPath, outdir_folder)
 
         # edit new config with user options + latest_run
         with open(outdir_folder + "/config.yml") as f:
@@ -159,31 +182,24 @@ class vomix_actions:
         with open(script_path, "w") as f:
             f.write(script)
 
-        workdir = module_obj.workdir
-        if workdir is None:
-            with open(outdir_folder + "/config.yml") as f:
-                list_doc = yaml.safe_load(f)
-                workdir = list_doc["workdir"]
-
-        logging.info(f"Running script from : {workdir}")
+        logging.info(f"Running script: {script_path}")
         cmd = ['bash', script_path]
 
-        # currentVomixDir = os.path.dirname(os.path.abspath(__file__))
-        # count = sum(1 for _ in re.finditer(r'\b%s\b' % re.escape("/vomix"), currentVomixDir))
-        # upPath = "/"
+        currentVomixDir = os.path.dirname(os.path.abspath(__file__))
+        count = sum(1 for _ in re.finditer(r'\b%s\b' % re.escape("/vomix"), currentVomixDir))
+        upPath = "/"
 
-        # if count == 1:
-        #     currentWorkingPath = str.replace(currentVomixDir, "/vomix", upPath)
-        # elif count > 1:
-        #     currentWorkingPath = upPath.join(currentVomixDir.rsplit("/vomix", count - 1))
-        # else:
-        #     raise FileNotFoundError("Could not determine the path to the current working directory.")
+        if count == 1:
+            currentWorkingPath = str.replace(currentVomixDir, "/vomix", upPath)
+        elif count > 1:
+            currentWorkingPath = upPath.join(currentVomixDir.rsplit("/vomix", count - 1))
+        else:
+            raise FileNotFoundError("Could not determine the path to the current working directory.")
 
-        # logging.info(f"currentWorkingPath: {currentWorkingPath}")
-        
+        logging.info(f"currentWorkingPath: {currentWorkingPath}")
 
         try:
-            with Popen(cmd, stdout=PIPE, bufsize=1, universal_newlines=True, cwd= workdir) as p:
+            with Popen(cmd, stdout=PIPE, bufsize=1, universal_newlines=True, cwd=currentWorkingPath) as p:
                 for line in p.stdout:
                     print(line, end='') 
 
