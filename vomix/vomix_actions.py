@@ -156,7 +156,13 @@ class vomix_actions:
         with open(script_path, "w") as f:
             f.write(script)
 
-        logging.info(f"Running script: {script_path}")
+        workdir = module_obj.workdir
+        if workdir is None:
+            with open(outdir_folder + "/config.yml") as f:
+                list_doc = yaml.safe_load(f)
+                workdir = list_doc["workdir"]
+
+        logging.info(f"Running script from : {workdir}")
         cmd = ['bash', script_path]
 
         # currentVomixDir = os.path.dirname(os.path.abspath(__file__))
@@ -174,7 +180,7 @@ class vomix_actions:
         
 
         try:
-            with Popen(cmd, stdout=PIPE, bufsize=1, universal_newlines=True, cwd= module_obj.workdir) as p:
+            with Popen(cmd, stdout=PIPE, bufsize=1, universal_newlines=True, cwd= workdir) as p:
                 for line in p.stdout:
                     print(line, end='') 
 
