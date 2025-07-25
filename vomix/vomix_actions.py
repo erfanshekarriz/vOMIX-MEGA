@@ -106,7 +106,7 @@ class vomix_actions:
             count = sum(1 for _ in re.finditer(r'\b%s\b' % re.escape("/vomix"), currentVomixDir))
             configPath = "/config/config.yml"
             # path = str.replace(os.path.dirname(os.path.abspath(filename)), "vomix", "/config/config.yml")
-            # logging.info(f"count: {count}", " currentVomixDir:  " , currentVomixDir)
+            logging.info(f"count: {count}", " currentVomixDir:  " , currentVomixDir)
 
             if count > 0:
                 path = configPath.join(currentVomixDir.rsplit("/vomix", count))
