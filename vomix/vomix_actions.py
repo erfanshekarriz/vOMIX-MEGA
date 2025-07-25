@@ -99,6 +99,12 @@ class vomix_actions:
             # TODO check if works 
             # Create a new config file from the config template
             filename = inspect.getframeinfo(inspect.currentframe()).filename
+
+            currentDir = os.path.dirname(os.path.realpath(__file__))
+            # /Users/elsavijendran/Projects/vOMIX-MEGA-main/vOMIX-MEGA/.venv/lib/python3.9/site-packages/vomix
+            # /home/eshekar/.conda/envs/vomix/lib/python3.12/site-packages/vomix
+            logging.info(f"///////currentDir: {currentDir}")
+
             path     = str.replace(os.path.dirname(os.path.abspath(filename)), "/.venv/lib/python3.9/site-packages/vomix", "/config/config.yml")
 
             logging.info(f"Using template config: {path}")
