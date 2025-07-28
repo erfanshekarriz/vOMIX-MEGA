@@ -61,18 +61,13 @@ class vomix_actions:
                 attr = str.replace(attr, "_", "-")
                 script += f'{attr}="{value}" '
 
-
         for attr, value in snakemake_obj.__dict__.items():
             if value is not None and attr != 'add_args':
                 attr = str.replace(attr, "_", "-")
                 if str(value) == 'True':
                     script += f'--{attr} '
-                elif str(attr) == 'jobs':
-                    script += f'--{attr} {value} '
-                elif str(attr) == 'latency-wait':
-                    script += f'--{attr} {value} '
                 elif str(value) != 'False':
-                    script += f'{attr}="{value}" '
+                    script += f'--{attr} {value} '
             if attr == 'add_args' and value is not None and value != '':
                 script += f'{value} '
 
