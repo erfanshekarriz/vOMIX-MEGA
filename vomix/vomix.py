@@ -89,16 +89,16 @@ def cli():
     vOMIX-MEGA - a reproducible, scalable, and fast viral metagenomic pipeline
     """
 
-@cli.command(
-        'activate',
-        context_settings=dict(ignore_unknown_options=True),
-        short_help='Set up vomix conda environment'
-    )
-def activate():
-    output = vomix_actions.env_setup_script()
-    logging.info(f"Output: {output}")
-    message = "Completed vomix environment creation"
-    logging.info(message)
+# @cli.command(
+#         'activate',
+#         context_settings=dict(ignore_unknown_options=True),
+#         short_help='Set up vomix conda environment'
+#     )
+# def activate():
+#     output = vomix_actions.env_setup_script()
+#     logging.info(f"Output: {output}")
+#     message = "Completed vomix environment creation"
+#     logging.info(message)
 
 
 @cli.command(
