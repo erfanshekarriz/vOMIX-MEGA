@@ -1,5 +1,5 @@
 class SnakemakeFlags:
-    def __init__(self, dry_run, forceall, configfile, unlock, cores, jobs, latency_wait, rerun_incomplete, rerun_triggers, sdm, executor, quiet, add_args):
+    def __init__(self, dry_run, forceall, configfile, unlock, cores, jobs, latency_wait, rerun_incomplete, rerun_triggers, sdm, executor, quiet, snakemake_args):
         self.dry_run = dry_run
         self.forceall = forceall
         self.configfile = configfile
@@ -12,4 +12,4 @@ class SnakemakeFlags:
         self.sdm = sdm
         self.executor = executor
         self.quiet = quiet
-        self.add_args = add_args
+        self.snakemake_args = snakemake_args

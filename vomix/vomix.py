@@ -57,7 +57,7 @@ def snakemake_options(function):
     function = click.option('--executor', '-e', required=False, default=None, help = '[Snakemake]')(function)
     function = click.option('--quiet', required=False, default=False, flag_value=True, help = '[Snakemake]')(function)
 
-    function = click.option('--add-args', required=False, default=None, help = '[Snakemake]')(function)
+    function = click.option('—snakemake-args', required=False, default=None, help = '[Snakemake]')(function)
 
     return function
 
@@ -116,7 +116,7 @@ def cli():
 @click.option('--aligner-params', required=False, default=None, help='PLEASE DO NOT change the -x sr for minimap2 to make sure it can accurately map short reads || default: "-x sr"')
 @click.option('--index-path', required=False, default=None, help='Path to host contamination || default: "./workflow/database/hostile/human-t2t-hla.fa.gz"')
 @snakemake_options
-def run_preprocess(workdir, outdir, datadir, samplelist, custom_config, fasta, fastadir, sample_name, assembly_ids, latest_run, splits, viral_binning, intermediate, setup_database, max_cores, email, ncbi_api_key, decontam_host, dwnld_params, pigz_params, fastp_params, hostile_params, hostile_aligner, aligner_params, index_path, dry_run, forceall, configfile, unlock, cores, jobs, latency_wait, rerun_incomplete, rerun_triggers, sdm, executor, quiet, add_args):
+def run_preprocess(workdir, outdir, datadir, samplelist, custom_config, fasta, fastadir, sample_name, assembly_ids, latest_run, splits, viral_binning, intermediate, setup_database, max_cores, email, ncbi_api_key, decontam_host, dwnld_params, pigz_params, fastp_params, hostile_params, hostile_aligner, aligner_params, index_path, dry_run, forceall, configfile, unlock, cores, jobs, latency_wait, rerun_incomplete, rerun_triggers, sdm, executor, quiet, snakemake_args):
         logging.info(f"Running module: preprocess")
         logging.info(f"decontamHost: {decontam_host}, outdir: {outdir}, datadir: {datadir}, samplelist: {samplelist}")
         # logging.info(f"Run with snakemake flags: " + "dry_run:" + str(dry_run) + ", forceall:" + str(forceall) + ", configfile:" + str(configfile))
@@ -152,7 +152,7 @@ def run_preprocess(workdir, outdir, datadir, samplelist, custom_config, fasta, f
             module_obj.hasOptions = True
 
         # snakemake options 
-        snakemake_obj = SnakemakeFlags(dry_run, forceall, configfile, unlock, cores, jobs, latency_wait, rerun_incomplete, rerun_triggers, sdm, executor, quiet, add_args)
+        snakemake_obj = SnakemakeFlags(dry_run, forceall, configfile, unlock, cores, jobs, latency_wait, rerun_incomplete, rerun_triggers, sdm, executor, quiet, snakemake_args)
 
         vomix_actions_instance = vomix_actions()
         vomix_actions_instance.run_module("preprocess", module_obj, snakemake_obj)
@@ -170,7 +170,7 @@ def run_preprocess(workdir, outdir, datadir, samplelist, custom_config, fasta, f
 @click.option('--spades-params', required=False, default=None, help = 'Parameters to pass on fastp software https://github.com/OpenGene/fastp || default: "--meta"')
 @click.option('--spades-memory', required=False, default=None, help = 'Parameters for hostile decontamination https://github.com/bede/hostile|| default: 250 NUM')
 @snakemake_options
-def run_assembly(workdir, outdir, datadir, samplelist, custom_config, fasta, fastadir, sample_name, assembly_ids, latest_run, splits, viral_binning, intermediate, setup_database, max_cores, email, ncbi_api_key, assembler, megahit_minlen, megahit_params, spades_params, spades_memory, dry_run, forceall, configfile, unlock, cores, jobs, latency_wait, rerun_incomplete, rerun_triggers, sdm, executor, quiet, add_args):
+def run_assembly(workdir, outdir, datadir, samplelist, custom_config, fasta, fastadir, sample_name, assembly_ids, latest_run, splits, viral_binning, intermediate, setup_database, max_cores, email, ncbi_api_key, assembler, megahit_minlen, megahit_params, spades_params, spades_memory, dry_run, forceall, configfile, unlock, cores, jobs, latency_wait, rerun_incomplete, rerun_triggers, sdm, executor, quiet, snakemake_args):
         logging.info(f"Running module: assembly")
         logging.info(f"assembler: {assembler}, outdir: {outdir}, datadir: {datadir}, samplelist: {samplelist}")
         
@@ -194,7 +194,7 @@ def run_assembly(workdir, outdir, datadir, samplelist, custom_config, fasta, fas
             module_obj.spades_memory = spades_memory
             module_obj.hasOptions = True
 
-        snakemake_obj = SnakemakeFlags(dry_run, forceall, configfile, unlock, cores, jobs, latency_wait, rerun_incomplete, rerun_triggers, sdm, executor, quiet, add_args)
+        snakemake_obj = SnakemakeFlags(dry_run, forceall, configfile, unlock, cores, jobs, latency_wait, rerun_incomplete, rerun_triggers, sdm, executor, quiet, snakemake_args)
 
         vomix_actions_instance = vomix_actions()
         vomix_actions_instance.run_module("assembler", module_obj, snakemake_obj)
@@ -220,7 +220,7 @@ def run_assembly(workdir, outdir, datadir, samplelist, custom_config, fasta, fas
 @click.option('--vOTU-targetcov', required=False, default=None, help = 'Minimum target coverage for fast clustering algorithm of viral contigs || default: 85 [NUM]')
 @click.option('--vOTU-querycov', required=False, default=None, help = 'Minimum query coverage for fast clustering algorithm of viral contigs || default: 0 [NUM]')
 @snakemake_options
-def run_viral_identify(workdir, outdir, datadir, samplelist, custom_config, fasta, fastadir, sample_name, assembly_ids, latest_run, splits, viral_binning, intermediate, setup_database, max_cores, email, ncbi_api_key, contig_minlen, genomad_db, genomad_minlen, genomad_params, genomad_cutoff, checkv_original, checkv_params, checkv_database, clustering_fast, cdhit_params, votu_ani, votu_targetcov, votu_querycov, dry_run, forceall, configfile, unlock, cores, jobs, latency_wait, rerun_incomplete, rerun_triggers, sdm, executor, quiet, add_args):
+def run_viral_identify(workdir, outdir, datadir, samplelist, custom_config, fasta, fastadir, sample_name, assembly_ids, latest_run, splits, viral_binning, intermediate, setup_database, max_cores, email, ncbi_api_key, contig_minlen, genomad_db, genomad_minlen, genomad_params, genomad_cutoff, checkv_original, checkv_params, checkv_database, clustering_fast, cdhit_params, votu_ani, votu_targetcov, votu_querycov, dry_run, forceall, configfile, unlock, cores, jobs, latency_wait, rerun_incomplete, rerun_triggers, sdm, executor, quiet, snakemake_args):
         logging.info(f"Running module: viral-identify")
         logging.info(f"outdir: {outdir}, datadir: {datadir}, samplelist: {samplelist}")
         
@@ -269,7 +269,7 @@ def run_viral_identify(workdir, outdir, datadir, samplelist, custom_config, fast
             module_obj.vOTU_querycov = votu_querycov
             module_obj.hasOptions = True
 
-        snakemake_obj = SnakemakeFlags(dry_run, forceall, configfile, unlock, cores, jobs, latency_wait, rerun_incomplete, rerun_triggers, sdm, executor, quiet, add_args)
+        snakemake_obj = SnakemakeFlags(dry_run, forceall, configfile, unlock, cores, jobs, latency_wait, rerun_incomplete, rerun_triggers, sdm, executor, quiet, snakemake_args)
 
         vomix_actions_instance = vomix_actions()
         vomix_actions_instance.run_module("viral-identify", module_obj, snakemake_obj)
@@ -291,7 +291,7 @@ def run_viral_identify(workdir, outdir, datadir, samplelist, custom_config, fast
 @click.option('--genomad-db', required=False, default=None, help = 'Path to geNomad database directory || default: "workflow/database/genomad" [STR]')
 @click.option('--genomad-params', required=False, default=None, help = 'Additional parameters to pass on to geNomad || default: "--enable-score-calibration --relaxed" [INT]')
 @snakemake_options
-def run_viral_taxonomy(workdir, outdir, datadir, samplelist, custom_config, fasta, fastadir, sample_name, assembly_ids, latest_run, splits, viral_binning, intermediate, setup_database, max_cores, email, ncbi_api_key, viphogs_hmmeval, viphogs_prop, phabox2_db, phagcn_minlen, phagcn_params, diamond_params, genomad_db, genomad_params, dry_run, forceall, configfile, unlock, cores, jobs, latency_wait, rerun_incomplete, rerun_triggers, sdm, executor, quiet, add_args):
+def run_viral_taxonomy(workdir, outdir, datadir, samplelist, custom_config, fasta, fastadir, sample_name, assembly_ids, latest_run, splits, viral_binning, intermediate, setup_database, max_cores, email, ncbi_api_key, viphogs_hmmeval, viphogs_prop, phabox2_db, phagcn_minlen, phagcn_params, diamond_params, genomad_db, genomad_params, dry_run, forceall, configfile, unlock, cores, jobs, latency_wait, rerun_incomplete, rerun_triggers, sdm, executor, quiet, snakemake_args):
         logging.info(f"Running module: viral-taxonomy")
         logging.info(f"fasta: {fasta}, outdir: {outdir}")
         
@@ -325,7 +325,7 @@ def run_viral_taxonomy(workdir, outdir, datadir, samplelist, custom_config, fast
             module_obj.genomad_params = genomad_params
             module_obj.hasOptions = True
 
-        snakemake_obj = SnakemakeFlags(dry_run, forceall, configfile, unlock, cores, jobs, latency_wait, rerun_incomplete, rerun_triggers, sdm, executor, quiet, add_args)
+        snakemake_obj = SnakemakeFlags(dry_run, forceall, configfile, unlock, cores, jobs, latency_wait, rerun_incomplete, rerun_triggers, sdm, executor, quiet, snakemake_args)
 
         vomix_actions_instance = vomix_actions()
         vomix_actions_instance.run_module("viral-taxonomy", module_obj, snakemake_obj)
@@ -342,7 +342,7 @@ def run_viral_taxonomy(workdir, outdir, datadir, samplelist, custom_config, fast
 @click.option('--iphop-cutoff', required=False, default=None, help = 'The number of correct host predictions was evaluated for 3 different score cutoffs corresponding to 20%, 10%, and 5% estimated FDR || default: 90 [NUM]')
 @click.option('--iphop-params', required=False, default=None, help = 'Parameters to pass on to iPhOp for consensus host analysis. Read more at https://bitbucket.org/srouxjgi/iphop/src || default: "" [STR]')
 @snakemake_options
-def run_viral_host(workdir, outdir, datadir, samplelist, custom_config, fasta, fastadir, sample_name, assembly_ids, latest_run, splits, viral_binning, intermediate, setup_database, max_cores, email, ncbi_api_key, cherry_params, phatyp_params, iphop_cutoff, iphop_params, dry_run, forceall, configfile, unlock, cores, jobs, latency_wait, rerun_incomplete, rerun_triggers, sdm, executor, quiet, add_args):
+def run_viral_host(workdir, outdir, datadir, samplelist, custom_config, fasta, fastadir, sample_name, assembly_ids, latest_run, splits, viral_binning, intermediate, setup_database, max_cores, email, ncbi_api_key, cherry_params, phatyp_params, iphop_cutoff, iphop_params, dry_run, forceall, configfile, unlock, cores, jobs, latency_wait, rerun_incomplete, rerun_triggers, sdm, executor, quiet, snakemake_args):
         logging.info(f"Running module: viral-host")
         logging.info(f"fasta: {fasta}, outdir: {outdir}")
         
@@ -363,7 +363,7 @@ def run_viral_host(workdir, outdir, datadir, samplelist, custom_config, fasta, f
         if iphop_params:
             module_obj.iphop_params = iphop_params
             module_obj.hasOptions = True
-        snakemake_obj = SnakemakeFlags(dry_run, forceall, configfile, unlock, cores, jobs, latency_wait, rerun_incomplete, rerun_triggers, sdm, executor, quiet, add_args)
+        snakemake_obj = SnakemakeFlags(dry_run, forceall, configfile, unlock, cores, jobs, latency_wait, rerun_incomplete, rerun_triggers, sdm, executor, quiet, snakemake_args)
 
         vomix_actions_instance = vomix_actions()
         vomix_actions_instance.run_module("viral-host", module_obj, snakemake_obj)
@@ -378,7 +378,7 @@ def run_viral_host(workdir, outdir, datadir, samplelist, custom_config, fasta, f
 @click.option('--mpa-indexv', required=False, default=None, help = 'The version of the MetaPhlAn4 database to download || default: "mpa_vOct22_CHOCOPhlAnSGB_202212" [STR]')
 @click.option('--mpa-params', required=False, default=None, help = 'Additional parameters to pass on to metaphlan function. See https://huttenhower.sph.harvard.edu/metaphlan/ for more. || default: "--ignore_eukaryotes" [STR]')
 @snakemake_options
-def run_viral_community(workdir, outdir, datadir, samplelist, custom_config, fasta, fastadir, sample_name, assembly_ids, latest_run, splits, viral_binning, intermediate, setup_database, max_cores, email, ncbi_api_key, mpa_indexv, mpa_params, dry_run, forceall, configfile, unlock, cores, jobs, latency_wait, rerun_incomplete, rerun_triggers, sdm, executor, quiet, add_args):
+def run_viral_community(workdir, outdir, datadir, samplelist, custom_config, fasta, fastadir, sample_name, assembly_ids, latest_run, splits, viral_binning, intermediate, setup_database, max_cores, email, ncbi_api_key, mpa_indexv, mpa_params, dry_run, forceall, configfile, unlock, cores, jobs, latency_wait, rerun_incomplete, rerun_triggers, sdm, executor, quiet, snakemake_args):
         logging.info(f"Running module: viral-community")
         logging.info(f"outdir: {outdir}, datadir: {datadir}, samplelist: {samplelist}")
         
@@ -393,7 +393,7 @@ def run_viral_community(workdir, outdir, datadir, samplelist, custom_config, fas
         if mpa_params:
             module_obj.mpa_params = mpa_params
             module_obj.hasOptions = True
-        snakemake_obj = SnakemakeFlags(dry_run, forceall, configfile, unlock, cores, jobs, latency_wait, rerun_incomplete, rerun_triggers, sdm, executor, quiet, add_args)
+        snakemake_obj = SnakemakeFlags(dry_run, forceall, configfile, unlock, cores, jobs, latency_wait, rerun_incomplete, rerun_triggers, sdm, executor, quiet, snakemake_args)
 
         vomix_actions_instance = vomix_actions()
         vomix_actions_instance.run_module("viral-community", module_obj, snakemake_obj)
@@ -408,7 +408,7 @@ def run_viral_community(workdir, outdir, datadir, samplelist, custom_config, fas
 @click.option('--eggNOG-params', required=False, default=None, help = 'Parameters for running eggNOG-mapper v2. See more at https://github.com/eggnogdb/eggnog-mapper/wiki || default: "-m diamond --hmm_evalue 0.001 --hmm_score 60 --query-cover 20 --subject-cover 20 --tax_scope auto --target_orthologs all --go_evidence non-electronic --report_orthologs" [INT]')
 @click.option('--PhaVIP-params', required=False, default=None, help = 'Minimum contig length to filter BEFORE viral identification || default: "" [STR]')
 @snakemake_options
-def run_viral_annotate(workdir, outdir, datadir, samplelist, custom_config, fasta, fastadir, sample_name, assembly_ids, latest_run, splits, viral_binning, intermediate, setup_database, max_cores, email, ncbi_api_key, eggnog_params, phavip_params, dry_run, forceall, configfile, unlock, cores, jobs, latency_wait, rerun_incomplete, rerun_triggers, sdm, executor, quiet, add_args):
+def run_viral_annotate(workdir, outdir, datadir, samplelist, custom_config, fasta, fastadir, sample_name, assembly_ids, latest_run, splits, viral_binning, intermediate, setup_database, max_cores, email, ncbi_api_key, eggnog_params, phavip_params, dry_run, forceall, configfile, unlock, cores, jobs, latency_wait, rerun_incomplete, rerun_triggers, sdm, executor, quiet, snakemake_args):
         logging.info(f"Running module: viral-annotate")
         logging.info(f"outdir: {outdir}, datadir: {datadir}, samplelist: {samplelist}")
         
@@ -423,7 +423,7 @@ def run_viral_annotate(workdir, outdir, datadir, samplelist, custom_config, fast
         if phavip_params:
             module_obj.PhaVIP_params = phavip_params
             module_obj.hasOptions = True
-        snakemake_obj = SnakemakeFlags(dry_run, forceall, configfile, unlock, cores, jobs, latency_wait, rerun_incomplete, rerun_triggers, sdm, executor, quiet, add_args)
+        snakemake_obj = SnakemakeFlags(dry_run, forceall, configfile, unlock, cores, jobs, latency_wait, rerun_incomplete, rerun_triggers, sdm, executor, quiet, snakemake_args)
 
         vomix_actions_instance = vomix_actions()
         vomix_actions_instance.run_module("viral-annotate", module_obj, snakemake_obj)
@@ -438,7 +438,7 @@ def run_viral_annotate(workdir, outdir, datadir, samplelist, custom_config, fast
 @click.option('--mpa-params', required=False, default=None, help = 'Parameters for metaphlan function. See more at https://huttenhower.sph.harvard.edu/metaphlan/ || default: "--ignore_eukaryotes" [STR]')
 @click.option('--mpa-indexv', required=False, default=None, help = 'Database version for metaphlan to use. See more at https://huttenhower.sph.harvard.edu/metaphlan/ || default: "mpa_vOct22_CHOCOPhlAnSGB_202212" [STR]')
 @snakemake_options
-def run_prok_community(workdir, outdir, datadir, samplelist, custom_config, fasta, fastadir, sample_name, assembly_ids, latest_run, splits, viral_binning, intermediate, setup_database, max_cores, email, ncbi_api_key, mpa_params, mpa_indexv, dry_run, forceall, configfile, unlock, cores, jobs, latency_wait, rerun_incomplete, rerun_triggers, sdm, executor, quiet, add_args):
+def run_prok_community(workdir, outdir, datadir, samplelist, custom_config, fasta, fastadir, sample_name, assembly_ids, latest_run, splits, viral_binning, intermediate, setup_database, max_cores, email, ncbi_api_key, mpa_params, mpa_indexv, dry_run, forceall, configfile, unlock, cores, jobs, latency_wait, rerun_incomplete, rerun_triggers, sdm, executor, quiet, snakemake_args):
         logging.info(f"Running module: prok-community")
         logging.info(f"outdir: {outdir}, datadir: {datadir}, samplelist: {samplelist}")
         
@@ -453,7 +453,7 @@ def run_prok_community(workdir, outdir, datadir, samplelist, custom_config, fast
         if mpa_indexv:
             module_obj.mpa_indexv = mpa_indexv
             module_obj.hasOptions = True
-        snakemake_obj = SnakemakeFlags(dry_run, forceall, configfile, unlock, cores, jobs, latency_wait, rerun_incomplete, rerun_triggers, sdm, executor, quiet, add_args)
+        snakemake_obj = SnakemakeFlags(dry_run, forceall, configfile, unlock, cores, jobs, latency_wait, rerun_incomplete, rerun_triggers, sdm, executor, quiet, snakemake_args)
 
         vomix_actions_instance = vomix_actions()
         vomix_actions_instance.run_module("prok-community", module_obj, snakemake_obj)
@@ -469,7 +469,7 @@ def run_prok_community(workdir, outdir, datadir, samplelist, custom_config, fast
 )
 @common_options
 @snakemake_options
-def run_prok_annotate(workdir, outdir, datadir, samplelist, fasta, fastadir, sample_name, assembly_ids, latest_run, splits, viral_binning, intermediate, setup_database, max_cores, email, ncbi_api_key, custom_config, dry_run, forceall, configfile, unlock, cores, jobs, latency_wait, rerun_incomplete, rerun_triggers, sdm, executor, quiet, add_args):
+def run_prok_annotate(workdir, outdir, datadir, samplelist, fasta, fastadir, sample_name, assembly_ids, latest_run, splits, viral_binning, intermediate, setup_database, max_cores, email, ncbi_api_key, custom_config, dry_run, forceall, configfile, unlock, cores, jobs, latency_wait, rerun_incomplete, rerun_triggers, sdm, executor, quiet, snakemake_args):
         logging.info(f"Running module: prok-annotate")
         logging.info(f"outdir: {outdir}, datadir: {datadir}, samplelist: {samplelist}")
         
@@ -477,7 +477,7 @@ def run_prok_annotate(workdir, outdir, datadir, samplelist, fasta, fastadir, sam
         module_obj.name = "prok-annotate"
         # Set the attributes of the module object
         module_obj = setOptions(module_obj, workdir, outdir, datadir, samplelist, fasta, fastadir, sample_name, assembly_ids, latest_run, splits, viral_binning, intermediate, setup_database, max_cores, email, ncbi_api_key, custom_config)
-        snakemake_obj = SnakemakeFlags(dry_run, forceall, configfile, unlock, cores, jobs, latency_wait, rerun_incomplete, rerun_triggers, sdm, executor, quiet, add_args)
+        snakemake_obj = SnakemakeFlags(dry_run, forceall, configfile, unlock, cores, jobs, latency_wait, rerun_incomplete, rerun_triggers, sdm, executor, quiet, snakemake_args)
 
         vomix_actions_instance = vomix_actions()
         vomix_actions_instance.run_module("prok-annotate", module_obj, snakemake_obj)
@@ -490,7 +490,7 @@ def run_prok_annotate(workdir, outdir, datadir, samplelist, fasta, fastadir, sam
 )
 @common_options
 @snakemake_options
-def run_end_to_end(workdir, outdir, datadir, samplelist, fasta, fastadir, sample_name, assembly_ids, latest_run, splits, viral_binning, intermediate, setup_database, max_cores, email, ncbi_api_key, custom_config, dry_run, forceall, configfile, unlock, cores, jobs, latency_wait, rerun_incomplete, rerun_triggers, sdm, executor, quiet, add_args):
+def run_end_to_end(workdir, outdir, datadir, samplelist, fasta, fastadir, sample_name, assembly_ids, latest_run, splits, viral_binning, intermediate, setup_database, max_cores, email, ncbi_api_key, custom_config, dry_run, forceall, configfile, unlock, cores, jobs, latency_wait, rerun_incomplete, rerun_triggers, sdm, executor, quiet, snakemake_args):
         logging.info(f"Running module: end-to-end")
         logging.info(f"outdir: {outdir}, datadir: {datadir}, samplelist: {samplelist}")
         
@@ -498,7 +498,7 @@ def run_end_to_end(workdir, outdir, datadir, samplelist, fasta, fastadir, sample
         module_obj.name = "end-to-end"
         # Set the attributes of the module object
         module_obj = setOptions(module_obj, workdir, outdir, datadir, samplelist, fasta, fastadir, sample_name, assembly_ids, latest_run, splits, viral_binning, intermediate, setup_database, max_cores, email, ncbi_api_key, custom_config)
-        snakemake_obj = SnakemakeFlags(dry_run, forceall, configfile, unlock, cores, jobs, latency_wait, rerun_incomplete, rerun_triggers, sdm, executor, quiet, add_args)
+        snakemake_obj = SnakemakeFlags(dry_run, forceall, configfile, unlock, cores, jobs, latency_wait, rerun_incomplete, rerun_triggers, sdm, executor, quiet, snakemake_args)
 
         vomix_actions_instance = vomix_actions()
         vomix_actions_instance.run_module("end-to-end", module_obj, snakemake_obj)
@@ -516,7 +516,7 @@ def run_end_to_end(workdir, outdir, datadir, samplelist, fasta, fastadir, sample
 @click.option('--vOTU-targetcov', required=False, default=None, help = 'Minimum target coverage for fast clustering algorithm of viral contigs || default: 85 [NUM]')
 @click.option('--vOTU-querycov', required=False, default=None, help = 'Minimum query coverage for fast clustering algorithm of viral contigs || default: 0 [NUM]')
 @snakemake_options
-def run_cluster_fast(workdir, outdir, datadir, samplelist, custom_config, fasta, fastadir, sample_name, assembly_ids, latest_run, splits, viral_binning, intermediate, setup_database, max_cores, email, ncbi_api_key, clustering_fast, cdhit_params, votu_ani, votu_targetcov, votu_querycov, dry_run, forceall, configfile, unlock, cores, jobs, latency_wait, rerun_incomplete, rerun_triggers, sdm, executor, quiet, add_args):
+def run_cluster_fast(workdir, outdir, datadir, samplelist, custom_config, fasta, fastadir, sample_name, assembly_ids, latest_run, splits, viral_binning, intermediate, setup_database, max_cores, email, ncbi_api_key, clustering_fast, cdhit_params, votu_ani, votu_targetcov, votu_querycov, dry_run, forceall, configfile, unlock, cores, jobs, latency_wait, rerun_incomplete, rerun_triggers, sdm, executor, quiet, snakemake_args):
         logging.info(f"Running module: cluster-fast")
         logging.info(f"fasta: {fasta}, outdir: {outdir}")
         
@@ -540,7 +540,7 @@ def run_cluster_fast(workdir, outdir, datadir, samplelist, custom_config, fasta,
         if votu_querycov:
             module_obj.votu_querycov = votu_querycov
             module_obj.hasOptions = True
-        snakemake_obj = SnakemakeFlags(dry_run, forceall, configfile, unlock, cores, jobs, latency_wait, rerun_incomplete, rerun_triggers, sdm, executor, quiet, add_args)
+        snakemake_obj = SnakemakeFlags(dry_run, forceall, configfile, unlock, cores, jobs, latency_wait, rerun_incomplete, rerun_triggers, sdm, executor, quiet, snakemake_args)
 
         vomix_actions_instance = vomix_actions()
         vomix_actions_instance.run_module("cluster-fast", module_obj, snakemake_obj)
@@ -556,7 +556,7 @@ def run_cluster_fast(workdir, outdir, datadir, samplelist, custom_config, fasta,
 @click.option('--checkv-params', required=False, default=None, help = 'Additional parameters to pass on to CheckV. Read more at https://bitbucket.org/berkeleylab/CheckV/src || default: "" [STR]')
 @click.option('--checkv-database', required=False, default=None, help = 'Path to CheckV\'s database || default: "workflow/database/checkv" [STR]')
 @snakemake_options
-def run_checkv_pyhmmer(workdir, outdir, datadir, samplelist, custom_config, fasta, fastadir, sample_name, assembly_ids, latest_run, splits, viral_binning, intermediate, setup_database, max_cores, email, ncbi_api_key, checkv_original, checkv_params, checkv_database, dry_run, forceall, configfile, unlock, cores, jobs, latency_wait, rerun_incomplete, rerun_triggers, sdm, executor, quiet, add_args):
+def run_checkv_pyhmmer(workdir, outdir, datadir, samplelist, custom_config, fasta, fastadir, sample_name, assembly_ids, latest_run, splits, viral_binning, intermediate, setup_database, max_cores, email, ncbi_api_key, checkv_original, checkv_params, checkv_database, dry_run, forceall, configfile, unlock, cores, jobs, latency_wait, rerun_incomplete, rerun_triggers, sdm, executor, quiet, snakemake_args):
         logging.info(f"Running module: checkv-pyhmmer")
         logging.info(f"fasta: {fasta}, outdir: {outdir}")
         
@@ -574,7 +574,7 @@ def run_checkv_pyhmmer(workdir, outdir, datadir, samplelist, custom_config, fast
         if checkv_database:
             module_obj.checkv_database = checkv_database
             module_obj.hasOptions = True
-        snakemake_obj = SnakemakeFlags(dry_run, forceall, configfile, unlock, cores, jobs, latency_wait, rerun_incomplete, rerun_triggers, sdm, executor, quiet, add_args)
+        snakemake_obj = SnakemakeFlags(dry_run, forceall, configfile, unlock, cores, jobs, latency_wait, rerun_incomplete, rerun_triggers, sdm, executor, quiet, snakemake_args)
 
         vomix_actions_instance = vomix_actions()
         vomix_actions_instance.run_module("checkv-pyhmmer", module_obj, snakemake_obj)
@@ -595,7 +595,7 @@ def run_checkv_pyhmmer(workdir, outdir, datadir, samplelist, custom_config, fast
 @click.option('--iphop-db', required=False, default=None, help = 'Path to iPHoP database for download || default: "workflow/database/iphop/Aug_2023_pub_rw" [STR]')
 @click.option('--humann-db', required=False, default=None, help = 'Path to HUMAnN3 databases for download || default: "workflow/database/humann" [STR]')
 @snakemake_options
-def run_setup_database(workdir, outdir, datadir, samplelist, custom_config, fasta, fastadir, sample_name, assembly_ids, latest_run, splits, viral_binning, intermediate, setup_database, max_cores, email, ncbi_api_key, phabox2_db, genomad_db, checkv_db, eggnog_db, eggnog_db_params, virsorter2_db, iphop_db, humann_db, dry_run, forceall, configfile, unlock, cores, jobs, latency_wait, rerun_incomplete, rerun_triggers, sdm, executor, quiet, add_args):
+def run_setup_database(workdir, outdir, datadir, samplelist, custom_config, fasta, fastadir, sample_name, assembly_ids, latest_run, splits, viral_binning, intermediate, setup_database, max_cores, email, ncbi_api_key, phabox2_db, genomad_db, checkv_db, eggnog_db, eggnog_db_params, virsorter2_db, iphop_db, humann_db, dry_run, forceall, configfile, unlock, cores, jobs, latency_wait, rerun_incomplete, rerun_triggers, sdm, executor, quiet, snakemake_args):
         logging.info(f"Running module: setup-database")
         logging.info(f"fasta: {fasta}, outdir: {outdir}")
         
@@ -629,7 +629,7 @@ def run_setup_database(workdir, outdir, datadir, samplelist, custom_config, fast
             module_obj.humann_db = humann_db
             module_obj.hasOptions = True
 
-        snakemake_obj = SnakemakeFlags(dry_run, forceall, configfile, unlock, cores, jobs, latency_wait, rerun_incomplete, rerun_triggers, sdm, executor, quiet, add_args)
+        snakemake_obj = SnakemakeFlags(dry_run, forceall, configfile, unlock, cores, jobs, latency_wait, rerun_incomplete, rerun_triggers, sdm, executor, quiet, snakemake_args)
 
         vomix_actions_instance = vomix_actions()
         vomix_actions_instance.run_module("setup-database", module_obj, snakemake_obj)

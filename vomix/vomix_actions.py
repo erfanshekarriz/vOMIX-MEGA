@@ -62,13 +62,13 @@ class vomix_actions:
                 script += f'{attr}="{value}" '
 
         for attr, value in snakemake_obj.__dict__.items():
-            if value is not None and attr != 'add_args':
+            if value is not None and attr != 'snakemake_args':
                 attr = str.replace(attr, "_", "-")
                 if str(value) == 'True':
                     script += f'--{attr} '
                 elif str(value) != 'False':
                     script += f'--{attr} {value} '
-            if attr == 'add_args' and value is not None and value != '':
+            if attr == 'snakemake_args' and value is not None and value != '':
                 script += f'{value} '
 
         script += "--sdm conda --use-conda"
