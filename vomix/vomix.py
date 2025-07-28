@@ -35,7 +35,7 @@ def common_options(function):
     function = click.option('--splits', default=0, required=False, help = 'Splits data into N chunks to reduce memory usage wherever possible || default: 0')(function)
     function = click.option('--viral-binning', is_flag=True, default=False, required=False, help = '')(function)
     function = click.option('--intermediate', is_flag=True, default=False, required=False, help = 'Flag to keep LARGE intermediate files generated during analysis || default: False')(function)
-    function = click.option('--setup-database', is_flag=True, default=True, required=False, help = '')(function)
+    function = click.option('--setup-database', is_flag=True, default=False, required=False, help = '')(function)
     function = click.option('--max-cores', default=4, required=False, help = '')(function)
     function = click.option('--email', default=None, required=False, help = '')(function)
     function = click.option('--NCBI-API-key', default=None, required=False, help = '')(function)

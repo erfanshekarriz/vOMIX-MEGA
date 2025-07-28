@@ -54,7 +54,12 @@ class vomix_actions:
         script += "snakemake --config module=\"" + module + "\" "
 
         for attr, value in module_obj.__dict__.items():
-            if value is not None and attr != 'custom_config' and attr != 'name':
+            attr = str.replace(attr, "_", "-")
+            if attr != 'latency-wait':
+                script += f'--{attr} {value} '
+            elif attr != 'jobs':
+                script += f'--{attr} {value} '
+            elif value is not None and attr != 'custom_config' and attr != 'name':
                 attr = str.replace(attr, "_", "-")
                 script += f'{attr}="{value}" '
 
