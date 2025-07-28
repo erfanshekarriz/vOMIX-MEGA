@@ -57,7 +57,7 @@ def snakemake_options(function):
     function = click.option('--executor', '-e', required=False, default=None, help = '[Snakemake]')(function)
     function = click.option('--quiet', required=False, default=False, flag_value=True, help = '[Snakemake]')(function)
 
-    function = click.option('—snakemake-args', required=False, default=None, help = '[Snakemake]')(function)
+    function = click.option('--snakemake-args', required=False, default=None, help = '[Snakemake]')(function)
 
     return function
 
