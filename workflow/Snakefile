@@ -120,6 +120,9 @@ emptykeys = sum(1 for key in inputkeys if config.get(key, "") != "")
 
 if emptykeys != 1 and config["module"] != "setup-database": 
   console.print(Panel.fit(f"[dim] Multiple or no inputs detected. You can EITHER provide config['samplelist'] OR config['fastadir'] OR config['fasta']. You must provide at least one input format. Please read more about the permitted inputs on our wiki page.", title="Error", subtitle="Multiple Input Formats"))
+
+  console.print(f'Inputs = samplelist: {config['samplelist']}, fasta: {config['fasta']}, fastadir: {config['fastadir']}')
+
   sys.exit(1)
 
 
