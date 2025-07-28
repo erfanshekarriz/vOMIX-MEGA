@@ -55,9 +55,9 @@ class vomix_actions:
 
         for attr, value in module_obj.__dict__.items():
             attr = str.replace(attr, "_", "-")
-            if attr != 'latency-wait':
+            if attr == 'latency-wait':
                 script += f'--{attr} {value} '
-            elif attr != 'jobs':
+            elif attr == 'jobs':
                 script += f'--{attr} {value} '
             elif value is not None and attr != 'custom_config' and attr != 'name':
                 attr = str.replace(attr, "_", "-")
