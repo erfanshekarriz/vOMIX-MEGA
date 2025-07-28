@@ -52,7 +52,7 @@ def snakemake_options(function):
     function = click.option('--jobs', '-j', default=4, required=False, help = '[Snakemake]')(function)
     function = click.option('--latency-wait', default=20, required=False, help = '[Snakemake]')(function)
     function = click.option('--rerun-incomplete', '-ri', required=False, default=False, flag_value=True, help = '[Snakemake]')(function)
-    function = click.option('--rerun-triggers', '-ri', required=False, default=None, help = '[Snakemake]')(function)
+    function = click.option('--rerun-triggers', required=False, default=None, help = '[Snakemake]')(function)
     function = click.option('--sdm', required=False, default=None, help = '[Snakemake]')(function)
     function = click.option('--executor', '-e', required=False, default=None, help = '[Snakemake]')(function)
     function = click.option('--quiet', required=False, default=False, flag_value=True, help = '[Snakemake]')(function)
