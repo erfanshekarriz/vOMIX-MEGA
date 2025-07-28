@@ -11,6 +11,7 @@ n_cores = config['max-cores']
 
 
 ### Check if geNomad is run already 
+genomad_f = True
 if os.path.exists(relpath("identify/viral/output/classification_summary_vOTUs.csv")):
   genomad_out = relpath("identify/viral/output/classification_summary_vOTUs.csv")
   genomad_f = False
