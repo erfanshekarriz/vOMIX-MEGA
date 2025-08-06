@@ -1,7 +1,7 @@
 # general configuration 
 
 module: "end-to-end"
-workdir : "/home/eshekar/pipeline/vomix/"
+workdir : "."
 outdir : "results/"
 datadir : "fastq/"
 samplelist : ""
@@ -16,7 +16,7 @@ intermediate: False
 setup-database: True
 max-cores: 4
 email: "vomixtest@gmail.com"
-NCBI-API-key: "ad4774fd01842f9b95dad79ee660b972d808"
+NCBI-API-key: ""
 
 # setup-database.smk
 
