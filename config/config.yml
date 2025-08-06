@@ -2,6 +2,7 @@
 
 module: "end-to-end"
 workdir : "."
+basedir: ""
 outdir : "results/"
 datadir : "fastq/"
 samplelist : ""
@@ -11,8 +12,7 @@ sample-name: ""
 assembly-ids: ""
 latest-run : ""
 splits: 0
-viral-binning: False
-intermediate: False
+keep-intermediates: False
 setup-database: True
 max-cores: 4
 email: "vomixtest@gmail.com"
@@ -24,15 +24,19 @@ PhaBox2-db: "workflow/database/phabox_db_v2"
 genomad-db: "workflow/database/genomad"
 virsorter2-db: "workflow/database/virsorter2"
 vibrant-db: "workflow/database/vibrant"
-checkv-database: "workflow/database/checkv"
-iphop-dbdir: "workflow/database/iphop/Aug_2023_pub_rw"
+checkv-db: "workflow/database/checkv"
+iphop-db: "workflow/database/iphop"
+iphop-db-version: "iPHoP_db_Aug23_rw"
+iphop-db-basename: "Aug_2023_pub_rw" # make sure base name is compatible with version https://bitbucket.org/srouxjgi/iphop/src/main/#markdown-header-host-databases-and-versions
 eggNOG-db: "workflow/database/eggNOGv2"
 eggNOG-db-params: ""
 humann-db: "workflow/database/humann"
 checkm2-db: "workflow/database/checkm2"
 GTDBTk-db: "workflow/database/GTDB-Tk"
+GTDBTk-db-version: "220" # Make sure that the database is compatible with the version of GTDB-Tk used https://ecogenomics.github.io/GTDBTk/installing/index.html#gtdb-tk-reference-data in the current vomix
 
-# preprocess.smk & preprocess-decontam.smk
+
+# preprocess.smk
 
 dwnld-params : ""
 dwnld-only: False
@@ -41,52 +45,34 @@ fastp-params: ""
 hostile-params: ""
 decontam-host: True
 hostile-aligner: "minimap2" # minimap2 or bowtie2 for long reads
-aligner-params: "-x sr" # parameters to pass to aligner [-x sr for minimap is for short reads]
-index-path: "workflow/database/hostile/human-t2t-hla.fa.gz" # visit https://github.com/bede/hostile to find out how to make your own custom host index
+hostile-aligner-params: "-x sr" # parameters to pass to aligner [-x sr for minimap is for short reads]
+hostile-index-path: "workflow/database/hostile/human-t2t-hla.fa.gz" # visit https://github.com/bede/hostile to find out how to make your own custom host index
 
 # assembly.smk 
 
 assembler: "megahit" #["megahit", "spades"]
-megahit-minlen: 300
+megahit-min-len: 300
 megahit-params: "--prune-level 3"
 spades-params: "--meta"
 spades-memory: 250
 
 
-# viral-identify.smk and viral-benchmark.smk
+# viral-identify.smk viral-benchmark.smk
 
-contig-minlen: 0
-genomad-minlen: 1000
-dvf-minlen: 1500
-phamer-minlen: 2000
-
+contig-min-len: 0
+genomad-min-len: 1000
 genomad-params: "--enable-score-calibration --relaxed"
-dvf-params: ""
-phamer-params: ""
-virsorter2-params: ""
-vf-params: ""
-vibrant-params: ""
-seeker-params: ""
-ppr-params: ""
-metaphinder-params: ""
-
 genomad-cutoff: 0.7
-dvf-cutoff: 0.7
-dvf-pval: 0.05
-phamer-cutoff: 0.7
-phamer-pred: "phage"
-vf-cutoff: ""
-virsorter2-cutoff: ""
-seeker-params: ""
-ppr-params: ""
-metaphinder-params: ""
-
 genomad-cutoff-s: 0
-phamer-cutoff-s: 0
-dvf-cutoff-s: 0
+
+
+# viral-identify.smk viral-benchmark.smk & checkv-pyhmmer.smk
 
 checkv-original: False
 checkv-params: ""
+
+
+# viral-identify.smk viral-benchmark.smk & clustering.smk
 
 clustering-fast: True
 cdhit-params: "-c 0.95 -aS 0.85 -d 400 -M 0 -n 5"
@@ -94,18 +80,35 @@ vOTU-ani: 95
 vOTU-targetcov: 85
 vOTU-querycov: 0
 
-minimap2-params: "-x sr"
-vrhyme-params: "-m 1000"
-vrhyme-minlen: 2000 # WARNING: cannot be set bellow 2000
+
+# viral-benchmark.smk
+
+dvf-min-len: 1500
+phamer-min-len: 2000 
+
+dvf-params: ""
+phamer-params: ""
+virsorter2-params: ""
+vf-params: ""
+vibrant-params: ""
+seeker-params: ""
+ppr-params: ""
+
+dvf-cutoff: 0.7
+dvf-pval: 0.05
+phamer-cutoff: 0.7
+phamer-pred: "phage"
+vf-cutoff: 0
+virsorter2-cutoff: 0
+seeker-cutoff: 0
+ppr-cutoff: 0
+vibrant-cutoff: 0
 
 
 # viral-taxonomy.smk
 
-viphogs-hmmeval: 0.01
-viphogs-prop: 0.6  # Minimum proportion of annotated genes required for taxonomic assignment (default: 0.6)
-phagcn-minlen: 1000 # the minimum tested
+phagcn-min-len: 1000 # the minimum tested
 phagcn-params: ""
-diamond-params: "--query-cover 50 --subject-cover 50 --evalue 1e-5 --max-target-seqs 1000" # strongly recommend not changing this as it has been extensively tested by https://doi.org/10.1038/s41564-021-00928-6
 genomad-params: "--enable-score-calibration --relaxed"
 
 
@@ -115,13 +118,19 @@ coverm-params: "--mapper minimap2-sr --min-read-percent-identity 95 --min-read-a
 coverm-methods : "tpm rpkm" # a space delimited list from coverm options
 
 
-# host.smk
+# viral-host.smk
 
+iphop-host: False
 iphop-cutoff: 90
 iphop-params: ""
 CHERRY-params: ""
 PhaTYP-params: ""
 
+
+# viral-annotate.smk
+
+eggNOG-params: "-m diamond --hmm_evalue 0.001 --hmm_score 60 --query-cover 20 --subject-cover 20 --tax_scope auto --target_orthologs all --go_evidence non-electronic --report_orthologs"
+PhaVIP-params: ""
 
 # prok-community.smk
 
@@ -147,11 +156,5 @@ GTDBTk-classify-params: ""
 VAMB-params: "-m 100"
 
 
-# viral-annotate.smk
-
-eggNOG-params: "-m diamond --hmm_evalue 0.001 --hmm_score 60 --query-cover 20 --subject-cover 20 --tax_scope auto --target_orthologs all --go_evidence non-electronic --report_orthologs"
-PhaVIP-params: ""
-
 # prok-annotate.smk
 humann-params: ""
-

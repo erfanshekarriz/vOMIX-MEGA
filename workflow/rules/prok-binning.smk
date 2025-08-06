@@ -10,7 +10,7 @@ nowstr=config["latest-run"]
 outdir=config["outdir"]
 datadir=config["datadir"]
 
-samples, assemblies = parse_sample_list(config["workdir"] + config["samplelist"], datadir, outdir, email, api_key, nowstr)
+samples, assemblies = parse_sample_list(config["samplelist"], datadir, outdir, email, api_key, nowstr)
 
 os.makedirs(logdir, exist_ok=True)
 os.makedirs(benchmarks, exist_ok=True)
@@ -76,8 +76,8 @@ else:
 rule strobealign:
   name: "prok-binning.smk strobealign SR mapping"
   input:
-    R1=relpath("preprocess/samples/{sample_id}/{sample_id}_R1.fastq.gz"),
-    R2=relpath("preprocess/samples/{sample_id}/{sample_id}_R2.fastq.gz"),
+    R1=relpath("preprocess/samples/{sample_id}/output/{sample_id}_R1_cut.trim.filt.fastq.gz"),
+    R2=relpath("preprocess/samples/{sample_id}/output/{sample_id}_R2_cut.trim.filt.fastq.gz"),
     fasta=lambda wildcards: relpath(os.path.join("assembly", assembler, "samples", samples[wildcards.sample_id]["assembly"], "output/final.contigs.fa")),
   output:
     bam=relpath("binning/prok/samples/{sample_id}/strobealign/{sample_id}.sorted.bam")
@@ -535,11 +535,12 @@ rule galah:
     mv {params.tmpdir}/tmp.tsv {output.tsv}
     """
 
+
 rule GTDBTk_identify:
   name: "prok-binning.smk GTDB-Tk identify"
   input:
     tsv=relpath("binning/prok/output/clusters.tsv"), 
-    db=os.path.join(config["GTDBTk-db"], "done.log")
+    db=os.path.join(config["GTDBTk-db"], ("gtdbtk_r" + config["GTDBTk-db-version"] + "_data.tar.gz"))
   output:
     relpath("binning/prok/output/taxonomy/gtdbtk/identify/gtdbtk.log")
   params:
@@ -557,6 +558,8 @@ rule GTDBTk_identify:
     """
     rm -rf {params.tmpdir} {params.outdir}
     mkdir -p {params.tmpdir} {params.outdir}
+
+    conda env config vars set GTDBTK_DATA_PATH="{input.db}"
 
     gtdbtk identify \
         --genome_dir {params.indir} \

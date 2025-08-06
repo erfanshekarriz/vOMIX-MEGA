@@ -6,7 +6,7 @@ nowstr=config["latest-run"]
 outdir=config["outdir"]
 datadir=config["datadir"]
 
-samples, assemblies = parse_sample_list(config["workdir"] + config["samplelist"], datadir, outdir, email, api_key, nowstr)
+samples, assemblies = parse_sample_list(config["samplelist"], datadir, outdir, email, api_key, nowstr)
 
 ###################
 # DELETE SYMLINKS #

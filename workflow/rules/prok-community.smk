@@ -8,7 +8,7 @@ nowstr=config["latest-run"]
 outdir=config["outdir"]
 datadir=config["datadir"]
 
-samples, assemblies = parse_sample_list(config["workdir"] + config["samplelist"], datadir, outdir, email, api_key, nowstr)
+samples, assemblies = parse_sample_list(config["samplelist"], datadir, outdir, email, api_key, nowstr)
 
 os.makedirs(logdir, exist_ok=True)
 os.makedirs(benchmarks, exist_ok=True) 
@@ -33,8 +33,8 @@ rule done_log:
 rule metaphlan:
   name: "prok-community.smk MetaPhlAn with Bowtie2"
   input: 
-    R1=relpath("preprocess/samples/{sample_id}/{sample_id}_R1.fastq.gz"), 
-    R2=relpath("preprocess/samples/{sample_id}/{sample_id}_R2.fastq.gz"), 
+    R1=relpath("preprocess/samples/{sample_id}/output/{sample_id}_R1_cut.trim.filt.fastq.gz"), 
+    R2=relpath("preprocess/samples/{sample_id}/output/{sample_id}_R2_cut.trim.filt.fastq.gz"), 
   output:
     rpkm=relpath("community/metaphlan/samples/{sample_id}/{sample_id}.txt"),
     sam=relpath("community/metaphlan/samples/{sample_id}/{sample_id}_bowtie_out.txt")

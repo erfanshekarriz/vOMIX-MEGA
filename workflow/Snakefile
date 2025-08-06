@@ -17,6 +17,19 @@ console = Console()
 
 configfile: "config/config.yml"
 workdir: config["workdir"]
+config["basedir"] =  workflow.basedir # Only run this IF the database directory is the default
+
+#print(f"The current Snakefile is located at: {workflow.snakefile}")
+#print(f"The base directory of the workflow is: {workflow.basedir}")
+
+# Relatavise all database directories to basedir
+
+db_list = ["PhaBox2-db", "genomad-db", "virsorter2-db", "vibrant-db", 
+    "checkv-db", "iphop-db", "eggNOG-db", "humann-db", "checkm2-db", "GTDBTk-db"]
+
+for db_dir in db_list:
+  config[db_dir] = os.path.join(config["basedir"], "..", config[db_dir])
+
 
 # Important utility functions
 
@@ -45,9 +58,9 @@ def readfasta(f):
   if extension.lower() not in ['.fa', '.fasta', '.fna']:
     console.print(Panel.fit("File path does not end with .fa, .fasta, or .fna", title = "Error", subtitle="Input not fasta file"))
     sys.exit(1)
-  cwd = os.getcwd()
-  fasta_path = os.path.join(cwd, fastap)
-  if not os.path.exists(fastap):
+  #fasta_path = os.path.join(config["workdir"], fastap)
+  fasta_path = fastap
+  if not os.path.exists(fasta_path):
     console.print(Panel.fit("[dim]The fasta file path provided does not exist.", title="Error", subtitle="Fasta File Path"))
     sys.exit(1)
   if config['sample-name'] == "":
@@ -62,7 +75,8 @@ def readfasta(f):
 def readfastadir(f):
   """Function to read directory filled with fasta files for different input purposes"""
   fastadir = cleanpath(f)
-  fastadirp = os.path.join(os.getcwd(), fastadir)
+  #fastadirp = os.path.join(os.getcwd(), fastadir)
+  fastadirp = fastadir
   if not os.path.exists(fastadirp):
     console.print(Panel.fit(f"The input file path '{fastadirp}' does not exist.", title="Error", subtitle="Fasta Directory Not Found."))
   fastafs = [f for f in os.listdir(fastadirp) if (f.endswith('.fa') or f.endswith('.fasta') or f.endswith('.fna'))]
@@ -118,18 +132,15 @@ if not isinstance(config['max-cores'], int):
 inputkeys = ["fasta", "samplelist", "fastadir"]
 emptykeys = sum(1 for key in inputkeys if config.get(key, "") != "")
 
-if emptykeys != 1 and config["module"] != "setup-database": 
+if emptykeys != 1 and (config["module"] not in ["setup-database","containerize"]): 
   console.print(Panel.fit(f"[dim] Multiple or no inputs detected. You can EITHER provide config['samplelist'] OR config['fastadir'] OR config['fasta']. You must provide at least one input format. Please read more about the permitted inputs on our wiki page.", title="Error", subtitle="Multiple Input Formats"))
-
-  console.print(f'Inputs = samplelist: {config['samplelist']}, fasta: {config['fasta']}, fastadir: {config['fastadir']}')
-
   sys.exit(1)
 
 
 ### Save configuration file [WARNING: THIS DECTION IS DIFFERENT BETWEEN THE SNAKEMAKE BACKEND AND WRAPPER SOFTWARES]
 now = datetime.datetime.now()
-# nowstr = now.strftime("%Y%m%d_%H%M%S")
-nowstr = config["latest-run"]
+nowstr = now.strftime("%Y%m%d_%H%M%S")
+config["latest-run"] = nowstr
 
 logdir = relpath(".vomix/log/vomix" + nowstr)
 os.makedirs(logdir, exist_ok=True)
@@ -145,7 +156,7 @@ targets = []
 if config["setup-database"] or config["module"] == "setup-database":
   include: "rules/setup-database.smk"
   if config["module"] == "setup-database":
-    targets += ["workflow/database/.benchmarks/done.log"]
+    targets += [os.path.join(config["basedir"], "workflow/database/.benchmarks/done.log")]
 
 
 # fix symlink
@@ -168,12 +179,7 @@ if config["module"] == "assembly" or config["module"] == "end-to-end":
 # identify (viral)
 if config["module"] == "viral-identify" or config["module"] == "end-to-end":
   include: "rules/viral-identify.smk"
-  if config["viral-binning"]:
-    include: "rules/viral-binning.smk"
-  if config["checkv-original"]:
-    include: "rules/checkv.smk"
-  else:
-    include: "rules/checkv-pyhmmer.smk"
+  include: "rules/checkv-pyhmmer.smk"
   include: "rules/clustering.smk"
   targets += [relpath("identify/viral/logs/done.log")]
 
@@ -186,12 +192,7 @@ if config["module"] == "viral-benchmark":
 # viral refilter
 if config["module"] == "viral-refilter":
   include: "rules/refilter-genomad.smk"
-  if config["viralbinning"]:
-    include: "rules/viral-binning.smk"
-  if config["checkv-original"]:
-    include: "rules/checkv.smk"
-  else:
-    include: "rules/checkv-pyhmmer.smk"
+  include: "rules/checkv-pyhmmer.smk"
   include: "rules/clustering.smk"
   targets += [relpath("identify/viral/logs/done.log"), 
       relpath("identify/viral/logs/clustering-done.log"), 
@@ -199,14 +200,11 @@ if config["module"] == "viral-refilter":
 
 # checkv-pyhmmer
 if config["module"] == "checkv-pyhmmer":
-  if config["checkv-original"]:
-    include: "rules/checkv.smk"
-  else:
-    include: "rules/checkv-pyhmmer.smk"
+  include: "rules/checkv-pyhmmer.smk"
   targets += [relpath("identify/viral/logs/checkv-done.log")]
 
 # cluster fast
-if config["module"] == "clustering-fast":
+if config["module"] == "cluster-fast":
   include: "rules/clustering.smk"
   targets += [relpath("identify/viral/logs/clustering-done.log")]
 
@@ -225,7 +223,7 @@ if config["module"] == "prok-binning" or config["module"] == "end-to-end":
   include: "rules/prok-binning.smk"
   targets += [relpath("binning/prok/logs/done.log")]
 
-# host 
+# vrial host 
 if config["module"] == "viral-host" or config["module"] == "end-to-end":
   targets += [relpath("host/logs/done.log")]
   include: "rules/viral-host.smk"

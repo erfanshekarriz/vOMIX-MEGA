@@ -8,7 +8,7 @@ nowstr=config["latest-run"]
 outdir=config["outdir"]
 datadir=config["datadir"]
 
-samples, assemblies = parse_sample_list(config["workdir"] + config["samplelist"], datadir, outdir, email, api_key, nowstr)
+samples, assemblies = parse_sample_list(config["samplelist"], datadir, outdir, email, api_key, nowstr)
 
 os.makedirs(logdir, exist_ok=True)
 os.makedirs(benchmarks, exist_ok=True)
@@ -43,8 +43,8 @@ rule done_log:
 rule pair_fastq:
   name: "prok-annotate.smk merge paired files"
   input: 
-    R1=relpath("preprocess/samples/{sample_id}/{sample_id}_R1.fastq.gz"),
-    R2=relpath("preprocess/samples/{sample_id}/{sample_id}_R2.fastq.gz"),
+    R1=relpath("preprocess/samples/{sample_id}/output/{sample_id}_R1_cut.trim.filt.fastq.gz"),
+    R2=relpath("preprocess/samples/{sample_id}/output/{sample_id}_R2_cut.trim.filt.fastq.gz"),
   output:
     relpath("annotate/prok/samples/{sample_id}/input/{sample_id}_merged.fastq.gz")
   params:

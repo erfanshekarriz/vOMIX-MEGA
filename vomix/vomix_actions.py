@@ -49,6 +49,8 @@ class vomix_actions:
     
 
     def createScript(self, module, module_obj, snakemake_obj):
+        cwd = os.path.abspath(os.getcwd())
+
         script = ""
 
         script += "snakemake --config module=\"" + module + "\" "
@@ -58,8 +60,12 @@ class vomix_actions:
             if str(value) == 'True' or str(value) == 'False':
                 script += f'{attr}={value} '
             elif value is not None and attr != 'custom_config' and attr != 'name':
-                attr = str.replace(attr, "_", "-")
-                script += f'{attr}="{value}" '
+                if attr == 'samplelist' or attr == 'datadir' or attr == 'outdir' or attr == 'fasta' or attr == 'fastadir':
+                    attr = str.replace(attr, "_", "-")
+                    script += f'{attr}="{cwd}/{value}" '
+                else:
+                    attr = str.replace(attr, "_", "-")
+                    script += f'{attr}="{value}" '
 
         for attr, value in snakemake_obj.__dict__.items():
             if value is not None and attr != 'snakemake_args':

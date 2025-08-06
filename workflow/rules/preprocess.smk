@@ -8,7 +8,12 @@ nowstr=config["latest-run"]
 outdir=config["outdir"] 
 datadir=config["datadir"]
 
-samples, assemblies = parse_sample_list(config["workdir"] + config["samplelist"], datadir, outdir, email, api_key, nowstr)
+print(f"email: {email}" )
+print(f"nowstr: {nowstr}" )
+print(f"config: {config}" )
+
+
+samples, assemblies = parse_sample_list(config["samplelist"], datadir, outdir, email, api_key, nowstr)
 
 os.makedirs(logdir, exist_ok=True)
 os.makedirs(tmpd, exist_ok=True)

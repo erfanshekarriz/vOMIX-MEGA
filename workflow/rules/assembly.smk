@@ -12,7 +12,7 @@ nowstr=config["latest-run"]
 outdir=config["outdir"]
 datadir=config["datadir"]
 
-samples, assemblies = parse_sample_list(config["workdir"] + config["samplelist"], datadir, outdir, email, api_key, nowstr)
+samples, assemblies = parse_sample_list(config["samplelist"], datadir, outdir, email, api_key, nowstr)
 
 # Check if there are any co-assemblies and abort if using SPAdes and co-assembly
 if (len(assemblies.keys()) != len(samples.keys())) and (assembler == "spades"):
@@ -39,15 +39,15 @@ rule done:
 rule megahit:
   name : "assembly.smk MEGAHIT assembly"
   input:
-    R1s=lambda wildcards: expand(relpath("preprocess/samples/{sample_id}/{sample_id}_R1.fastq.gz"),
+    R1s=lambda wildcards: expand(relpath("preprocess/samples/{sample_id}/output/{sample_id}_R1_cut.trim.filt.fastq.gz"),
         sample_id = assemblies[wildcards.assembly_id]["sample_id"]),
-    R2s=lambda wildcards: expand(relpath("preprocess/samples/{sample_id}/{sample_id}_R2.fastq.gz"),
+    R2s=lambda wildcards: expand(relpath("preprocess/samples/{sample_id}/output/{sample_id}_R2_cut.trim.filt.fastq.gz"),
         sample_id = assemblies[wildcards.assembly_id]["sample_id"])
   output:
     fasta=relpath("assembly/megahit/samples/{assembly_id}/output/final.contigs.fa")
   params:
     parameters=config['megahit-params'],
-    minlen=config["megahit-minlen"],
+    minlen=config["megahit-min-len"],
     outdir=relpath("assembly/megahit/samples/{assembly_id}/output"),
     tmpdir=os.path.join(tmpd, "megahit")
   log: os.path.join(logdir, "megahit_{assembly_id}.log")
@@ -78,9 +78,9 @@ rule megahit:
 rule spades:
   name : "assembly.smk SPAdes (--meta) assembly"
   input:
-    R1s=lambda wildcards: expand(relpath("preprocess/samples/{sample_id}/{sample_id}_R1.fastq.gz"),
+    R1s=lambda wildcards: expand(relpath("preprocess/samples/{sample_id}/output/{sample_id}_R1_cut.trim.filt.fastq.gz"),
         sample_id = assemblies[wildcards.assembly_id]["sample_id"]),
-    R2s=lambda wildcards: expand(relpath("preprocess/samples/{sample_id}/{sample_id}_R2.fastq.gz"),
+    R2s=lambda wildcards: expand(relpath("preprocess/samples/{sample_id}/output/{sample_id}_R2_cut.trim.filt.fastq.gz"),
         sample_id = assemblies[wildcards.assembly_id]["sample_id"])
   output:
     fasta=relpath("assembly/spades/samples/{assembly_id}/output/final.contigs.fa")
@@ -141,4 +141,3 @@ rule assembly_stats:
     mv {params.tmpdir}/tmp1.tsv {output.sizedist}
     mv {params.tmpdir}/tmp2.tsv {output.stats}
     """
-

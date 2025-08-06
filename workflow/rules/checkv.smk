@@ -19,7 +19,7 @@ if config['fasta'] != "":
   sample_id = config["sample-name"]
   assembly_ids = [sample_id]
 else:
-  samples, assemblies = parse_sample_list(config["workdir"] + config["samplelist"], datadir, outdir, email, nowstr)
+  samples, assemblies = parse_sample_list(config["samplelist"], datadir, outdir, email, nowstr)
   fastap = relpath("identify/viral/output/derep/combined.viralcontigs.derep.fa")
 
 

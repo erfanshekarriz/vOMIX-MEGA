@@ -1,8 +1,8 @@
 import os
 
-logdir="workflow/database/.logs"
-benchmarks="workflow/database/.benchmarks"
-tmpd="workflow/database/.tmp"
+logdir=os.path.join(config['basedir'], "workflow/database/.logs")
+benchmarks=os.path.join(config['basedir'], "workflow/database/.benchmarks")
+tmpd=os.path.join(config['basedir'], "workflow/database/.tmp")
 
 os.makedirs(logdir, exist_ok=True)
 os.makedirs(benchmarks, exist_ok=True)
@@ -18,6 +18,7 @@ rule done:
     os.path.join(config['genomad-db'], "genomad_db.source"), 
     expand("workflow/database/checkv/hmm_db/checkv_hmms/{index}.hmm", index=range(1, 81)), 
     os.path.join(config['PhaBox2-db'], "genus2hostlineage.pkl"), 
+    os.path.join(config["GTDBTk-db"], ("gtdbtk_r" + config["GTDBTk-db-version"] + "_data.tar.gz"))
   output:
     os.path.join(benchmarks, "done.log")
   shell:
@@ -52,7 +53,7 @@ rule checkv_db:
   localrule: True
   output: expand("workflow/database/checkv/hmm_db/checkv_hmms/{index}.hmm", index=range(1, 81))
   params:
-    outdir=config['checkv-database'],
+    outdir=config['checkv-db'],
     tmpdir=os.path.join(tmpd, "checkv/db")
   log: os.path.join(logdir, "checkv_db.log")
   benchmark: os.path.join(benchmarks, "checkv_db.log")
@@ -268,12 +269,19 @@ rule checkm2_download:
     mv {params.tmpdir}/CheckM2_database/* {params.outdir}/
     """
 
+
+gtdbtk_db_base_url = "https://data.ace.uq.edu.au/public/gtdb/data/releases/release"
+gtdbtk_db_version = config["GTDBTk-db-version"]
+gtdbtk_dwnld_lnk =f"{gtdbtk_db_base_url}{gtdbtk_db_version}/{gtdbtk_db_version}.0/auxillary_files/gtdbtk_package/full_package/gtdbtk_r{gtdbtk_db_version}_data.tar.gz"
+
 rule GTDBTk_download:
   name: "setup-database.smk GTDB-Tk Database (63.3 G)"
   output:
-    os.path.join(config["GTDBTk-db"], "done.log")
+    os.path.join(config["GTDBTk-db"], ("gtdbtk_r" + config["GTDBTk-db-version"] + "_data.tar.gz"))
   params:
     outdir=config["GTDBTk-db"], 
+    dbdir=os.path.join(config["GTDBTk-db"], "release" + config["GTDBTk-db-version"]),
+    dwnldlink=gtdbtk_dwnld_lnk,
     tmpdir=os.path.join(tmpd, "gtdbtkdb")
   conda: "../envs/gtdbtk.yml"
   log: os.path.join(logdir, "gtdbtk_db.log")
@@ -286,8 +294,39 @@ rule GTDBTk_download:
     rm -rf {params.outdir} {params.tmpdir}
     mkdir -p {params.outdir} 
 
-    download-db.sh {params.tmpdir} 2> {log}
-    touch {output}
+    wget -P {params.tmpdir} {params.dwnldlink} 2> {log}
+    #download-db.sh {params.tmpdir} 2> {log}
+    #touch {output}
 
     mv {params.tmpdir}/* {params.outdir}/
+    tar -xzvf {output} -C {params.outdir}
+    conda env config vars set GTDBTK_DATA_PATH="{params.dbdir}"
+    """
+
+
+rule iPHoP_download:
+  name: "setup-database.smk iPHoP Database (318.1 G)"
+  output: 
+    os.path.join(config["iphop-db"], config["iphop-db-basename"], "md5checkfile.txt")
+  params:
+    outdir=os.path.abspath(config["iphop-db"]),
+    dbversion=config["iphop-db-version"],
+    tmpdir=os.path.join(tmpd, "iphop-db")
+  conda: "../envs/iphop.yml"
+  log: os.path.join(logdir, "iphop_db.log")
+  benchmark: os.path.join(benchmarks, "iphop_db.log")
+  threads: 1
+  resources: 
+    mem_mb=lambda wildcards, attempt: attempt * 4 * 10**3
+  shell:
+    """
+    rm -rf {params.outdir} {params.tmpdir}
+    mkdir -p {params.outdir} {params.tmpdir}
+
+    iphop download \
+        --db_dir {params.tmpdir} \
+        --db_version {params.dbversion} \
+        --no_prompt
+
+    mv {params.tmpdir}/* {params.outdir}
     """
