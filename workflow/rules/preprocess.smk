@@ -165,7 +165,7 @@ if config["decontam-host"]:
     params:
       parameters=config["hostile-params"], 
       aligner=config["hostile-aligner"],
-      alignerp=config["aligner-params"],
+      alignerp=config["hostile-aligner-params"],
       indexpath=config["index-path"], 
       outdir=relpath("preprocess/samples/{sample_id}/output"),
       tmpdir=os.path.join(tmpd, "hostile/{sample_id}")
