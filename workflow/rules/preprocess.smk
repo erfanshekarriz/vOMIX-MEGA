@@ -35,7 +35,7 @@ if config['dwnld-only']:
       touch {output}
       """
 
-elif config['intermediate']:
+elif config['keep-intermediates']:
   rule done:
     name: "preprocessing.py Done. deleting all tmp files"
     localrule: True

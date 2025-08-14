@@ -111,7 +111,7 @@ def validate_samples(samples):
 		
 
 
-def parse_sample_list(f, datadir, outdir, email, api_key, time):
+def parse_sample_list(f, datadir, outdir, email, api_key, nowstr):
 	"""
 	Parse the sample list. Each sample is stored as a dictionary in the samples{} dictionary.
 	samples{sample_name} will have the following information:
@@ -248,9 +248,9 @@ def parse_sample_list(f, datadir, outdir, email, api_key, time):
 	
 
 	# save log of input files
-	logdir = os.path.join(outdir, (".vomix/log/vomix" + time))
+	logdir = os.path.join(outdir, (".vomix/log/vomix" + nowstr))
 	
-	with open(os.path.join(logdir,  "sample.json"), "w") as samplelog:
+	with open(os.path.join(logdir,  "samples.json"), "w") as samplelog:
 		json.dump(samples, samplelog)
 	with open(os.path.join(logdir,  "assemblies.json"), "w") as assemblylog:
 		json.dump(assemblies, assemblylog)
@@ -273,7 +273,8 @@ def parse_sample_list(f, datadir, outdir, email, api_key, time):
 				
 	# If not exited already, validate and write
 	Entrez.email = email
-	Entrez.api_key = api_key
+	if api_key != "":
+		Entrez.api_key = api_key
 	validate_samples(samples)
 	
 	with open(samplejson, "w") as sampleout:
@@ -283,4 +284,3 @@ def parse_sample_list(f, datadir, outdir, email, api_key, time):
 
 	
 	return samples, assemblies
-
