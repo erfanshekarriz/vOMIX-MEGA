@@ -114,7 +114,7 @@ def cli():
 @click.option('--hostile-params', required=False, default=None, help='Parameters for hostile decontamination https://github.com/bede/hostile|| default: ""')
 @click.option('--hostile-aligner', required=False, default=None, help='Which mapper to use for host decontamination- bowtie2 or minimap2 (recommended) || default: "minimap2"')
 @click.option('--hostile-aligner-params', required=False, default=None, help='PLEASE DO NOT change the -x sr for minimap2 to make sure it can accurately map short reads || default: "-x sr"')
-@click.option('--hostile-index-name', required=False, default=None, help='Path to host contamination || default: "./workflow/database/hostile/human-t2t-hla.fa.gz"')
+@click.option('--hostile-index-name', required=False, default=None, help='Path to host contamination || default: "./database/hostile/human-t2t-hla.fa.gz"')
 @snakemake_options
 def run_preprocess(workdir, outdir, datadir, samplelist, custom_config, fasta, fastadir, sample_name, assembly_ids, latest_run, splits, viral_binning, keep_intermediates, setup_database, max_cores, email, ncbi_api_key, decontam_host, dwnld_params, pigz_params, fastp_params, hostile_params, hostile_aligner, hostile_aligner_params, hostile_index_name, dry_run, forceall, configfile, unlock, cores, jobs, latency_wait, rerun_incomplete, rerun_triggers, sdm, executor, quiet, snakemake_args):
         cwd = os.path.abspath(os.getcwd())
@@ -209,14 +209,14 @@ def run_assembly(workdir, outdir, datadir, samplelist, custom_config, fasta, fas
 )
 @common_options
 @click.option('--contig-min-len', required=False, default=None, help = 'Minimum contig length to filter BEFORE viral identification || default: 0 [INT]')
-@click.option('--genomad-db', required=False, default=None, help = 'Path to geNomad databases || default: "workflow/database/genomad" [STR]')
+@click.option('--genomad-db', required=False, default=None, help = 'Path to geNomad databases || default: "database/genomad" [STR]')
 @click.option('--genomad-min-len', required=False, default=None, help = 'Minimum viral contig length for the geNomad cutoff || default: 1500 [INT]')
 @click.option('--genomad-params', required=False, default=None, help = 'Additional parameters to hand off to geNomad\'s analysis || default: "" [STR]')
 @click.option('--genomad-cutoff', required=False, default=None, help = 'Parameters for hostile decontamination https://github.com/bede/hostile|| default: 0.7 [INT]')
 @click.option('--genomad-cutoff-s', required=False, default=None, help = 'default: 0 [INT]')
 @click.option('--checkv-original', required=False, default=None, help = 'Flag to use CheckV original instead of the much faster version in vOMIX-MEGA, CheckV-PyHMMER. || default: False [True or False]')
 @click.option('--checkv-params', required=False, default=None, help = 'Additional parameters to pass on to CheckV. Read more at https://bitbucket.org/berkeleylab/CheckV/src || default: "" [STR]')
-@click.option('--checkv-database', required=False, default=None, help = 'Path to CheckV\'s database || default: "workflow/database/checkv" [STR]')
+@click.option('--checkv-database', required=False, default=None, help = 'Path to CheckV\'s database || default: "database/checkv" [STR]')
 @click.option('--clustering-fast', required=False, default=None, help = 'Flag to run fast clustering using CheckV\'s MEGABLAST approach. If set to False, CD-HIT will be used. Proceed with caution as it can be extremely slow at large sequence numbers. || default: True [True or False]')
 @click.option('--cdhit-params', required=False, default=None, help = 'Additional parameters to pass on to CD-HIT if clustering-fast is set to False. Read more at https://github.com/weizhongli/cdhit/blob/master/doc/cdhit-user-guide.wiki || default: "-c 0.95 -aS 0.85 -d 400 -M 0 -n 5" [STR]')
 @click.option('--vOTU-ani', required=False, default=None, help = 'Minimum average nucleotide identity for fast clustering algorithm of viral contigs || default: 95 [INT]')
@@ -290,11 +290,11 @@ def run_viral_identify(workdir, outdir, datadir, samplelist, custom_config, fast
 @common_options
 @click.option('--viphogs-hmmeval', required=False, default=None, help = 'Minimum e value for ViPhogs hmms to be considered a hit || default: 0.01 [NUM]')
 @click.option('--viphogs-prop', required=False, default=None, help = 'Minimum proportion of annotated genes required for taxonomic assignment || default: 0.6 [NUM]')
-@click.option('--PhaBox2-db', required=False, default=None, help = 'Path to phabox database directory || default: "workflow/database/phabox_db_v2"')
+@click.option('--PhaBox2-db', required=False, default=None, help = 'Path to phabox database directory || default: "database/phabox_db_v2"')
 @click.option('--phagcn-min-len', required=False, default=None, help = 'Minimum contig length to filter before PaGCN taxonomy annotation || default: 1500 [INT]')
 @click.option('--phagcn-params', required=False, default=None, help = 'Additional parameters to pass on to PhaGCN || default: "" [STR]')
 @click.option('--diamond-params', required=False, default=None, help = 'Parameters for taxonomic classification using diamond || default: "--query-cover 50 --subject-cover 50 --evalue 1e-5 --max-target-seqs 1000" [INT] || WARNING: strongly recommend not changing this as it has been extensively tested by https://doi.org/10.1038/s41564-021-00928-6')
-@click.option('--genomad-db', required=False, default=None, help = 'Path to geNomad database directory || default: "workflow/database/genomad" [STR]')
+@click.option('--genomad-db', required=False, default=None, help = 'Path to geNomad database directory || default: "database/genomad" [STR]')
 @click.option('--genomad-params', required=False, default=None, help = 'Additional parameters to pass on to geNomad || default: "--enable-score-calibration --relaxed" [INT]')
 @snakemake_options
 def run_viral_taxonomy(workdir, outdir, datadir, samplelist, custom_config, fasta, fastadir, sample_name, assembly_ids, latest_run, splits, viral_binning, keep_intermediates, setup_database, max_cores, email, ncbi_api_key, viphogs_hmmeval, viphogs_prop, phabox2_db, phagcn_min_len, phagcn_params, diamond_params, genomad_db, genomad_params, dry_run, forceall, configfile, unlock, cores, jobs, latency_wait, rerun_incomplete, rerun_triggers, sdm, executor, quiet, snakemake_args):
@@ -573,7 +573,7 @@ def run_cluster_fast(workdir, outdir, datadir, samplelist, custom_config, fasta,
 @common_options
 @click.option('--checkv-original', required=False, default=None, help = 'Flag to use CheckV original instead of the much faster version in vOMIX-MEGA, CheckV-PyHMMER. || default: False [True or False]')
 @click.option('--checkv-params', required=False, default=None, help = 'Additional parameters to pass on to CheckV. Read more at https://bitbucket.org/berkeleylab/CheckV/src || default: "" [STR]')
-@click.option('--checkv-database', required=False, default=None, help = 'Path to CheckV\'s database || default: "workflow/database/checkv" [STR]')
+@click.option('--checkv-database', required=False, default=None, help = 'Path to CheckV\'s database || default: "database/checkv" [STR]')
 @snakemake_options
 def run_checkv_pyhmmer(workdir, outdir, datadir, samplelist, custom_config, fasta, fastadir, sample_name, assembly_ids, latest_run, splits, viral_binning, keep_intermediates, setup_database, max_cores, email, ncbi_api_key, checkv_original, checkv_params, checkv_database, dry_run, forceall, configfile, unlock, cores, jobs, latency_wait, rerun_incomplete, rerun_triggers, sdm, executor, quiet, snakemake_args):
         logging.info(f"Running module: checkv-pyhmmer")
@@ -606,14 +606,14 @@ def run_checkv_pyhmmer(workdir, outdir, datadir, samplelist, custom_config, fast
 )
 @common_options
 @click.option('--hostile-index-db', required=False, default=None, help = '')
-@click.option('--PhaBox2-db', required=False, default=None, help = 'Path to PhaBox2 database for download || default: "workflow/database/phabox_db_v2" [STR]')
-@click.option('--genomad-db', required=False, default=None, help = 'Path to geNomad database for download || default: "workflow/database/genomad" [STR]')
-@click.option('--checkv-db', required=False, default=None, help = 'Path to CheckV database for download || default: "workflow/database/phabox_db_v2" [STR]')
-@click.option('--eggNOG-db', required=False, default=None, help = 'Path to eggNOG v2 database for download || default: "workflow/database/eggNOGv2" [STR]')
+@click.option('--PhaBox2-db', required=False, default=None, help = 'Path to PhaBox2 database for download || default: "database/phabox_db_v2" [STR]')
+@click.option('--genomad-db', required=False, default=None, help = 'Path to geNomad database for download || default: "database/genomad" [STR]')
+@click.option('--checkv-db', required=False, default=None, help = 'Path to CheckV database for download || default: "database/phabox_db_v2" [STR]')
+@click.option('--eggNOG-db', required=False, default=None, help = 'Path to eggNOG v2 database for download || default: "database/eggNOGv2" [STR]')
 @click.option('--eggNOG-db-params', required=False, default=None, help = 'Parameters for downloading eggNOG v2 database || default: "" [STR]')
-@click.option('--virsorter2-db', required=False, default=None, help = 'Path to VirSorter2 database for download || default: "workflow/database/virsorter2" [STR]')
-@click.option('--iphop-db', required=False, default=None, help = 'Path to iPHoP database for download || default: "workflow/database/iphop/Aug_2023_pub_rw" [STR]')
-@click.option('--humann-db', required=False, default=None, help = 'Path to HUMAnN3 databases for download || default: "workflow/database/humann" [STR]')
+@click.option('--virsorter2-db', required=False, default=None, help = 'Path to VirSorter2 database for download || default: "database/virsorter2" [STR]')
+@click.option('--iphop-db', required=False, default=None, help = 'Path to iPHoP database for download || default: "database/iphop/Aug_2023_pub_rw" [STR]')
+@click.option('--humann-db', required=False, default=None, help = 'Path to HUMAnN3 databases for download || default: "database/humann" [STR]')
 @snakemake_options
 def run_setup_database(workdir, outdir, datadir, samplelist, custom_config, fasta, fastadir, sample_name, assembly_ids, latest_run, splits, viral_binning, keep_intermediates, setup_database, max_cores, email, ncbi_api_key, phabox2_db, genomad_db, checkv_db, eggnog_db, eggnog_db_params, virsorter2_db, iphop_db, humann_db, dry_run, forceall, configfile, unlock, cores, jobs, latency_wait, rerun_incomplete, rerun_triggers, sdm, executor, quiet, snakemake_args, hostile_index_db):
         logging.info(f"Running module: setup-database")

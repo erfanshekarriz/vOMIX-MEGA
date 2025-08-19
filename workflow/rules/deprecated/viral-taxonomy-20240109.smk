@@ -81,7 +81,7 @@ rule pyhmmer_taxonomy:
   name: "viral-taxonomy.smk PyHMMER vOTUs [ViPhOGs]"
   input:
     faa=relpath("taxonomy/viral/intermediate/prodigal/proteins.vOTUs.faa"),
-    db="workflow/database/viphogshmm/vpHMM_database_v3/vpHMM_database_v3.hmm"
+    db="database/viphogshmm/vpHMM_database_v3/vpHMM_database_v3.hmm"
   output:
     tblcutga=relpath("taxonomy/viral/intermediate/viphogs/vOTUs_hmmsearch_cutga.tbl"), 
     tbl=relpath("taxonomy/viral/intermediate/viphogs/vOTUs_hmmscan.tbl")
@@ -148,7 +148,7 @@ rule VIRify_ratioeval:
   name: "viral-taxonomy.smk VIRify calculate evalue ratio"
   input:
     tbl=relpath("taxonomy/viral/intermediate/viphogs/vOTUs_hmmsearch_processed.tsv"), 
-    tsv="workflow/database/viphogshmm/additional_data_vpHMMs_v4.tsv" 
+    tsv="database/viphogshmm/additional_data_vpHMMs_v4.tsv" 
   output:
     relpath("taxonomy/viral/intermediate/viphogs/vOTUs_hmmsearch_processed_modified_informative.tsv")
   params:
@@ -211,7 +211,7 @@ rule VIRify_assign:
   name: "viral-taxonomy.smk VIRify assign taxonomy"
   input:
     tsv=relpath("taxonomy/viral/intermediate/viphogs/vOTUs_annotation.tsv"), 
-    db="workflow/database/ncbi/ete3ncbitax.sqlite", 
+    db="database/ncbi/ete3ncbitax.sqlite", 
     csv="workflow/params/VIRify/viphogs_cds_per_taxon_cummulative.csv"
   output:
     relpath("taxonomy/viral/intermediate/viphogs/taxonomy.tsv")
@@ -348,11 +348,11 @@ rule phagcn_taxonomy:
 rule diamond_makedb:
   name: "viral-taxonomy.smk make NCBI-Virus Refseq proteins diamond database"
   input:
-    "workflow/database/ncbi/ncbi-virus/ncbi.virus.RefSeq.faa"
+    "database/ncbi/ncbi-virus/ncbi.virus.RefSeq.faa"
   output:
-    "workflow/database/diamond/ncbi.virus.Refseq.dmnd"
+    "database/diamond/ncbi.virus.Refseq.dmnd"
   params:
-    outdir="workflow/database/diamond",
+    outdir="database/diamond",
     tmpdir=os.path.join(tmpd, "diamond")
   log: os.path.join(logdir, "diamond_makedb.log")
   benchmark: os.path.join(benchmarks, "diamond_makedb.log")
@@ -374,7 +374,7 @@ rule dimaond_taxonomy:
   name: "viral-taxonomy.smk DIAMOND blastp [NCBI-Virus Refseq]"
   input:
     faa=relpath("taxonomy/viral/intermediate/prodigal/proteins.vOTUs.faa"),
-    db="workflow/database/diamond/ncbi.virus.Refseq.dmnd"
+    db="database/diamond/ncbi.virus.Refseq.dmnd"
   output:
     relpath("taxonomy/viral/intermediate/diamond/diamond_out.tsv")
   params:
@@ -408,7 +408,7 @@ rule diamond_parse_taxonomy:
   name: "viral-taxonomy.smk DIAMOND taxonomic classification [NCBI-Virus Refseq]"
   input:
     diamondout = relpath("taxonomy/viral/intermediate/diamond/diamond_out.tsv"),
-    taxcsv = "workflow/database/ncbi/ncbi-virus/refseq/refseq.metadata.csv"
+    taxcsv = "database/ncbi/ncbi-virus/refseq/refseq.metadata.csv"
   output:
     relpath("taxonomy/viral/intermediate/diamond/taxonomy.csv")
   params:

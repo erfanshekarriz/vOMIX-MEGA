@@ -13,7 +13,7 @@ dependencies = [
 ]
 
 [tool.setuptools]
-packages = ["vomix", "config", "workflow", "workflow.database", "workflow.envs", "workflow.notebooks", "workflow.rules", "workflow.scripts"]
+packages = ["vomix", "config", "workflow", "workflow.database", "workflow.envs", "workflow.notebooks", "workflow.rules", "workflow.scripts", "database"]
 
 [tool.setuptools.package-data]
 "*" = ["*"]
