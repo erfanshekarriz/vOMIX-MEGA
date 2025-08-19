@@ -20,6 +20,6 @@
 !sample/contigs
 
 # except these subdirectories
-workflow/database
+database
 workflow/params
 workflow/software

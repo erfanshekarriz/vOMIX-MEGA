@@ -17,19 +17,19 @@ console = Console()
 
 configfile: "config/config.yml"
 workdir: config["workdir"]
-config["basedir"] =  workflow.basedir # Only run this IF the database directory is the default
+config["basedir"] =  workflow.basedir
 
 #print(f"The current Snakefile is located at: {workflow.snakefile}")
 #print(f"The base directory of the workflow is: {workflow.basedir}")
 
 # Relatavise all database directories to basedir
+# WARNING: For wrapper script, ONLY perform this IF the database directories are default. 
 
-db_list = ["PhaBox2-db", "genomad-db", "virsorter2-db", "vibrant-db", 
+db_list = ["hostile-index-db", "PhaBox2-db", "genomad-db", "virsorter2-db", "vibrant-db", 
     "checkv-db", "iphop-db", "eggNOG-db", "humann-db", "checkm2-db", "GTDBTk-db"]
 
 for db_dir in db_list:
-  config[db_dir] = os.path.join(config["basedir"], "..", config[db_dir])
-
+  config[db_dir] = os.path.join(config["basedir"], config[db_dir])
 
 # Important utility functions
 

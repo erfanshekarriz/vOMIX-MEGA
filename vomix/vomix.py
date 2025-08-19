@@ -114,9 +114,9 @@ def cli():
 @click.option('--hostile-params', required=False, default=None, help='Parameters for hostile decontamination https://github.com/bede/hostile|| default: ""')
 @click.option('--hostile-aligner', required=False, default=None, help='Which mapper to use for host decontamination- bowtie2 or minimap2 (recommended) || default: "minimap2"')
 @click.option('--hostile-aligner-params', required=False, default=None, help='PLEASE DO NOT change the -x sr for minimap2 to make sure it can accurately map short reads || default: "-x sr"')
-@click.option('--hostile-index-path', required=False, default=None, help='Path to host contamination || default: "./workflow/database/hostile/human-t2t-hla.fa.gz"')
+@click.option('--hostile-index-name', required=False, default=None, help='Path to host contamination || default: "./workflow/database/hostile/human-t2t-hla.fa.gz"')
 @snakemake_options
-def run_preprocess(workdir, outdir, datadir, samplelist, custom_config, fasta, fastadir, sample_name, assembly_ids, latest_run, splits, viral_binning, keep_intermediates, setup_database, max_cores, email, ncbi_api_key, decontam_host, dwnld_params, pigz_params, fastp_params, hostile_params, hostile_aligner, hostile_aligner_params, hostile_index_path, dry_run, forceall, configfile, unlock, cores, jobs, latency_wait, rerun_incomplete, rerun_triggers, sdm, executor, quiet, snakemake_args):
+def run_preprocess(workdir, outdir, datadir, samplelist, custom_config, fasta, fastadir, sample_name, assembly_ids, latest_run, splits, viral_binning, keep_intermediates, setup_database, max_cores, email, ncbi_api_key, decontam_host, dwnld_params, pigz_params, fastp_params, hostile_params, hostile_aligner, hostile_aligner_params, hostile_index_name, dry_run, forceall, configfile, unlock, cores, jobs, latency_wait, rerun_incomplete, rerun_triggers, sdm, executor, quiet, snakemake_args):
         cwd = os.path.abspath(os.getcwd())
         logging.info(f"Running module: preprocess")
         logging.info(f"User directory: {cwd}")
@@ -149,8 +149,8 @@ def run_preprocess(workdir, outdir, datadir, samplelist, custom_config, fasta, f
         if hostile_aligner_params:
             module_obj.aligner_params = hostile_aligner_params
             module_obj.hasOptions = True
-        if hostile_index_path:
-            module_obj.hostile_index_path = hostile_index_path
+        if hostile_index_name:
+            module_obj.hostile_index_name = hostile_index_name
             module_obj.hasOptions = True
 
         # snakemake options 
@@ -605,6 +605,7 @@ def run_checkv_pyhmmer(workdir, outdir, datadir, samplelist, custom_config, fast
     short_help='Run the Setup Database module'
 )
 @common_options
+@click.option('--hostile-index-db', required=False, default=None, help = '')
 @click.option('--PhaBox2-db', required=False, default=None, help = 'Path to PhaBox2 database for download || default: "workflow/database/phabox_db_v2" [STR]')
 @click.option('--genomad-db', required=False, default=None, help = 'Path to geNomad database for download || default: "workflow/database/genomad" [STR]')
 @click.option('--checkv-db', required=False, default=None, help = 'Path to CheckV database for download || default: "workflow/database/phabox_db_v2" [STR]')
@@ -614,7 +615,7 @@ def run_checkv_pyhmmer(workdir, outdir, datadir, samplelist, custom_config, fast
 @click.option('--iphop-db', required=False, default=None, help = 'Path to iPHoP database for download || default: "workflow/database/iphop/Aug_2023_pub_rw" [STR]')
 @click.option('--humann-db', required=False, default=None, help = 'Path to HUMAnN3 databases for download || default: "workflow/database/humann" [STR]')
 @snakemake_options
-def run_setup_database(workdir, outdir, datadir, samplelist, custom_config, fasta, fastadir, sample_name, assembly_ids, latest_run, splits, viral_binning, keep_intermediates, setup_database, max_cores, email, ncbi_api_key, phabox2_db, genomad_db, checkv_db, eggnog_db, eggnog_db_params, virsorter2_db, iphop_db, humann_db, dry_run, forceall, configfile, unlock, cores, jobs, latency_wait, rerun_incomplete, rerun_triggers, sdm, executor, quiet, snakemake_args):
+def run_setup_database(workdir, outdir, datadir, samplelist, custom_config, fasta, fastadir, sample_name, assembly_ids, latest_run, splits, viral_binning, keep_intermediates, setup_database, max_cores, email, ncbi_api_key, phabox2_db, genomad_db, checkv_db, eggnog_db, eggnog_db_params, virsorter2_db, iphop_db, humann_db, dry_run, forceall, configfile, unlock, cores, jobs, latency_wait, rerun_incomplete, rerun_triggers, sdm, executor, quiet, snakemake_args, hostile_index_db):
         logging.info(f"Running module: setup-database")
         logging.info(f"fasta: {fasta}, outdir: {outdir}")
         
@@ -646,6 +647,9 @@ def run_setup_database(workdir, outdir, datadir, samplelist, custom_config, fast
             module_obj.hasOptions = True
         if humann_db:
             module_obj.humann_db = humann_db
+            module_obj.hasOptions = True
+        if hostile_index_db:
+            module_obj.hostile_index_db = hostile_index_db
             module_obj.hasOptions = True
 
         snakemake_obj = SnakemakeFlags(dry_run, forceall, configfile, unlock, cores, jobs, latency_wait, rerun_incomplete, rerun_triggers, sdm, executor, quiet, snakemake_args)

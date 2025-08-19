@@ -20,19 +20,20 @@ NCBI-API-key: ""
 
 # setup-database.smk
 
-PhaBox2-db: "workflow/database/phabox_db_v2"
-genomad-db: "workflow/database/genomad"
-virsorter2-db: "workflow/database/virsorter2"
-vibrant-db: "workflow/database/vibrant"
-checkv-db: "workflow/database/checkv"
-iphop-db: "workflow/database/iphop"
+hostile-index-db: "database/hostile"
+PhaBox2-db: "database/phabox_db_v2"
+genomad-db: "database/genomad"
+virsorter2-db: "database/virsorter2"
+vibrant-db: "database/vibrant"
+checkv-db: "database/checkv"
+iphop-db: "database/iphop"
 iphop-db-version: "iPHoP_db_Aug23_rw"
 iphop-db-basename: "Aug_2023_pub_rw" # make sure base name is compatible with version https://bitbucket.org/srouxjgi/iphop/src/main/#markdown-header-host-databases-and-versions
-eggNOG-db: "workflow/database/eggNOGv2"
+eggNOG-db: "database/eggNOGv2"
 eggNOG-db-params: ""
-humann-db: "workflow/database/humann"
-checkm2-db: "workflow/database/checkm2"
-GTDBTk-db: "workflow/database/GTDB-Tk"
+humann-db: "database/humann"
+checkm2-db: "database/checkm2"
+GTDBTk-db: "database/GTDB-Tk"
 GTDBTk-db-version: "220" # Make sure that the database is compatible with the version of GTDB-Tk used https://ecogenomics.github.io/GTDBTk/installing/index.html#gtdb-tk-reference-data in the current vomix
 
 
@@ -42,11 +43,11 @@ dwnld-params : ""
 dwnld-only: False
 pigz-params: ""
 fastp-params: ""
-hostile-params: ""
 decontam-host: True
-hostile-aligner: "minimap2" # minimap2 or bowtie2 for long reads
-hostile-aligner-params: "-x sr" # parameters to pass to aligner [-x sr for minimap is for short reads]
-hostile-index-path: "workflow/database/hostile/human-t2t-hla.fa.gz" # visit https://github.com/bede/hostile to find out how to make your own custom host index
+hostile-params: ""
+hostile-index-name: "human-t2t-hla" # visit https://github.com/bede/hostile to find out how to make your own custom host index or see other available indexes.
+hostile-aligner: "bowtie2" # minimap2 for long reads or bowtie2 for short reads
+hostile-aligner-params: "" # parameters to pass to aligner
 
 # assembly.smk 
 

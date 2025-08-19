@@ -3,7 +3,7 @@ from vomix.module import Module
 class PreProcessingModule(Module):
     # snakemake --config module="preprocess" decontam-host=False outdir="sample/results" datadir="sample/fastq" samplelist="sample/sample_list.csv" --use-conda -j 4 --latency-wait 20
     name = "preprocess"
-    def __init__(self, decontam_host=False, hasOptions=False, dwnld_params=None, pigz_paramss=None, fastp_params=None, hostile_params=None, hostile_aligner=None, hostile_aligner_params=None, hostile_index_path=None):
+    def __init__(self, decontam_host=False, hasOptions=False, dwnld_params=None, pigz_paramss=None, fastp_params=None, hostile_params=None, hostile_aligner=None, hostile_aligner_params=None, hostile_index_name=None):
         self.decontam_host = decontam_host
         self.hasOptions = hasOptions
         self.dwnld_params = dwnld_params
@@ -12,7 +12,7 @@ class PreProcessingModule(Module):
         self.hostile_params = hostile_params 
         self.hostile_aligner = hostile_aligner
         self.hostile_aligner_params = hostile_aligner_params
-        self.hostile_index_path = hostile_index_path
+        self.hostile_index_name = hostile_index_name
         # dwnld-only
 
 class AssemblyCoAssemblyModule(Module):
@@ -137,7 +137,7 @@ class CheckVPyHMMERModule(Module):
 class SetupDatabaseModule(Module):
     # snakemake --config module="setup-database" fasta="sample/contigs/contigs_simulated_viral_nonviral.fasta" outdir="sample/results"  --use-conda -j 4 --latency-wait 20
     name = "setup-database"
-    def __init__(self, hasOptions=False, PhaBox2_db=None, genomad_db=None, checkv_db=None, eggNOG_db=None, eggNOG_db_params=None, virsorter2_db=None, iphop_db=None, iphop_db_version=None, iphop_db_basename=None, humann_db=None, GTDBTk_db=None, GTDBTk_db_version=None):
+    def __init__(self, hasOptions=False, PhaBox2_db=None, genomad_db=None, checkv_db=None, eggNOG_db=None, eggNOG_db_params=None, virsorter2_db=None, iphop_db=None, iphop_db_version=None, iphop_db_basename=None, humann_db=None, GTDBTk_db=None, GTDBTk_db_version=None, hostile_index_db=None):
         self.hasOptions = hasOptions
         self.PhaBox2_db = PhaBox2_db
         self.genomad_db = genomad_db
@@ -151,3 +151,4 @@ class SetupDatabaseModule(Module):
         self.humann_db = humann_db
         self.GTDBTk_db = GTDBTk_db
         self.GTDBTk_db_version = GTDBTk_db_version
+        self.hostile_index_db = hostile_index_db
