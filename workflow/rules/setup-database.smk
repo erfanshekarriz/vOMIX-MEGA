@@ -1,8 +1,8 @@
 import os
 
-logdir=os.path.join(config['basedir'], "database/.logs")
-benchmarks=os.path.join(config['basedir'], "database/.benchmarks")
-tmpd=os.path.join(config['basedir'], "database/.tmp")
+logdir=os.path.join(config['basedir'], "workflow/database/.logs")
+benchmarks=os.path.join(config['basedir'], "workflow/database/.benchmarks")
+tmpd=os.path.join(config['basedir'], "workflow/database/.tmp")
 
 os.makedirs(logdir, exist_ok=True)
 os.makedirs(benchmarks, exist_ok=True)
@@ -16,7 +16,7 @@ rule done:
   localrule: True
   input:
     os.path.join(config['genomad-db'], "genomad_db.source"), 
-    expand("database/checkv/hmm_db/checkv_hmms/{index}.hmm", index=range(1, 81)), 
+    expand("workflow/database/checkv/hmm_db/checkv_hmms/{index}.hmm", index=range(1, 81)), 
     os.path.join(config['PhaBox2-db'], "genus2hostlineage.pkl"), 
     os.path.join(config["GTDBTk-db"], ("gtdbtk_r" + config["GTDBTk-db-version"] + "_data.tar.gz"))
   output:
@@ -26,54 +26,6 @@ rule done:
     touch {output}
     """
 
-
-
-if config['hostile-aligner'] == "minimap2":
-  rule hostile_db:
-    name: "setup-database.smk Hostile minimap2 index (~12.1 G)"
-    output: 
-      os.path.join(config['hostile-index-db'], (config['hostile-index-name'] + ".fa.gz")), 
-      os.path.join(config['hostile-index-db'], (config['hostile-index-name'] + ".mmi"))
-    params:
-      outdir=config['hostile-index-db'], 
-      index=config['hostile-index-name']
-    log: os.path.join(logdir, "hostile_minimap2_db.log")
-    benchmark: os.path.join(logdir, "benchmarks_minimap2_db.log")
-    conda: "../envs/hostile.yml"
-    shell:
-      """
-      rm -rf {output}
-      mkdir -p {params.outdir}
-
-      hostile index delete --all &> {log}
-      hostile index fetch --name {params.index} --minimap2 &>> {log}
-
-      DB_DIR=$(hostile index list -a 2>&1 | grep "Local cache:" | cut -d"'" -f2)
-      mv ${{DB_DIR}}/* {params.outdir}
-      """
-
-elif config['hostile-aligner'] == "bowtie2":
-  rule hostile_db:
-    name: "setup-database.smk Hostile Bowtie2 index (~8.0 G)"
-    output: 
-      expand((os.path.join(config['hostile-index-db'], config['hostile-index-name']) +  ".{i}.bt2"), i = [1, 2, 3, 4])
-    params:
-      outdir=config['hostile-index-db'],
-      index=config['hostile-index-name']
-    log: os.path.join(logdir, "hostile_bowite_db.log")
-    benchmark: os.path.join(logdir, "benchmarks_bowite_db.log")
-    conda: "../envs/hostile.yml"
-    shell:
-      """
-      rm -rf {output} 
-      mkdir -p {params.outdir}
-      
-      hostile index delete --all &> {log}
-      hostile index fetch --name {params.index} --bowtie2 &>> {log}
-
-      DB_DIR=$(hostile index list -a 2>&1 | grep "Local cache:" | cut -d"'" -f2)
-      mv ${{DB_DIR}}/* {params.outdir} 
-      """
 
 rule genomad_db:
   name: "setup-database.smk geNomad database (1.3 G)"
@@ -99,7 +51,7 @@ rule genomad_db:
 rule checkv_db:
   name: "setup-database.smk CheckV database (7.3 G)"
   localrule: True
-  output: expand("database/checkv/hmm_db/checkv_hmms/{index}.hmm", index=range(1, 81))
+  output: expand("workflow/database/checkv/hmm_db/checkv_hmms/{index}.hmm", index=range(1, 81))
   params:
     outdir=config['checkv-db'],
     tmpdir=os.path.join(tmpd, "checkv/db")
@@ -275,7 +227,7 @@ rule eggnog_download:
     os.path.join(config['eggNOG-db'], "eggnog_proteins.dmnd")
   params:
     dbdir=config['eggNOG-db'],
-    outdir="database/eggNOGv2",
+    outdir="workflow/database/eggNOGv2",
     tmpdir=os.path.join(tmpd, "eggNOGdb")
   conda: "../envs/eggnog-mapper.yml"
   log: os.path.join(logdir, "eggNOGv2_db.log")

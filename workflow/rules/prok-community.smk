@@ -41,7 +41,7 @@ rule metaphlan:
   params:
     outdir=relpath("community/metaphlan/samples/{sample_id}"),
     bowtiedir=relpath("community/metaphlan/samples/{sample_id}/bowtie"),
-    db=os.path.join("database/metaphlan"), 
+    db=os.path.join("workflow/database/metaphlan"), 
     index_v=config["mpa-indexv"], 
     parameters=config["mpa-params"],
     tmpdir=os.path.join(tmpd, "metaphlan/{sample_id}")

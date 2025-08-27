@@ -156,7 +156,7 @@ targets = []
 if config["setup-database"] or config["module"] == "setup-database":
   include: "rules/setup-database.smk"
   if config["module"] == "setup-database":
-    targets += [os.path.join(config["basedir"], "database/.benchmarks/done.log")]
+    targets += [os.path.join(config["basedir"], "workflow/database/.benchmarks/done.log")]
 
 
 # fix symlink
